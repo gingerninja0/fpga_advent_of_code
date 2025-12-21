@@ -11,12 +11,11 @@ module alu_register_verilog (
     input wire reset,
 
     // Interface
-    input wire [`MSB:0] op,
-    input wire [`MSB:0] reg_write_data, 
+    input wire [`MSB:0] operator,
+    input wire [`MSB:0] operand,
     output wire [`MSB:0] reg_read_data,
 
     // ALU operations
-    input wire [3:0] alu_addr_1, alu_addr_2, alu_addr_3, // [addr_3] = [addr_2] [.] [addr_1]
     output wire [3:0] alu_flags
 );
 
@@ -26,11 +25,21 @@ module alu_register_verilog (
     wire [`MSB:0] alu_result;   // Output from ALU
     wire [`MSB:0] reg_out_port; // Output from Register for reading
 
+    wire [3:0] alu_addr_1, alu_addr_2, alu_addr_3; // [addr_3] = [addr_2] [.] [addr_1]
+
+    assign alu_addr_1 = operand[3:0];
+    assign alu_addr_2 = operand[11:8];
+    assign alu_addr_3 = operator[3:0];
+
+    wire [`MSB:0] reg_write_data;
+
+    assign reg_write_data = operand; // Write immediate for now
+
     // Logic to select what data gets written to the register
     // If the op code indicates an ALU operation, we write the ALU result.
     // Otherwise, we write the external reg_write_data.
     wire [`MSB:0] final_write_data;
-    assign final_write_data = (op[15:12] == 4'b0000) ? alu_result : reg_write_data;
+    assign final_write_data = (operator[15:12] == 4'b0000) ? alu_result : reg_write_data;
 
     // External read output shows whatever is on Port 1
     assign reg_read_data = reg_out_port;
@@ -39,7 +48,7 @@ module alu_register_verilog (
     dual_read_register_verilog register(
         .clk(clk),
         .reset(reset),
-        .op(op),
+        .op(operator),
         .addr_1(alu_addr_1),
         .addr_2(alu_addr_2),
         .addr_3(alu_addr_3),
@@ -52,7 +61,7 @@ module alu_register_verilog (
     alu_verilog alu(
         .clk(clk),
         .reset(reset),
-        .op(op),
+        .op(operator),
         .a(reg_a_data),
         .b(reg_b_data),
         .c(alu_result),
