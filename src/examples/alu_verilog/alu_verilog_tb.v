@@ -5,12 +5,12 @@ module alu_verilog_tb;
     // Inputs are registers (reg) because we drive them
     reg clk;
     reg reset;
-    reg [7:0] a;
-    reg [7:0] b;
-    reg [7:0] op;    
+    reg [15:0] a;
+    reg [15:0] b;
+    reg [15:0] op;    
     
     // Outputs are wires because we observe them
-    wire [7:0] c;
+    wire [15:0] c;
     wire [3:0] flags;
 
 
@@ -34,7 +34,7 @@ module alu_verilog_tb;
         reset = 1;
         a = 8'b11111111; // Example input A
         b = 8'b00000001; // Example input B
-        op = 8'b00000000; // Example operation code (addition)
+        op = 16'b0000000000000000; // Example operation code (addition)
 
         // Wait 20ns, then release reset
         #20 reset = 0;
