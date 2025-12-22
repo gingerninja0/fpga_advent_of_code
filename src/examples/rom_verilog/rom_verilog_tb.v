@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps  // Set time units
 
-// ROM Testbench
+// ROM Testbench: iverilog -o rom_sim rom_verilog.v rom_verilog_tb.v &&  vvp rom_sim
 
 module rom_verilog_tb;
 

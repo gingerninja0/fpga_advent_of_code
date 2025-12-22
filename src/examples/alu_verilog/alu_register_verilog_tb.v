@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps  // Set time units
 
-// ALU and Register Testbench
+// ALU and Register Testbench: iverilog -o alu_sim alu_verilog.v alu_register_verilog_tb.v dual_read_register_verilog.v alu_register_verilog.v && vvp alu_sim
 
 module alu_verilog_tb;
 
