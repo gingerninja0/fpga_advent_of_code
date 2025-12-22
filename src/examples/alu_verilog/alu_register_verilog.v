@@ -3,7 +3,7 @@
 `define MSB (`DATA_WIDTH - 1)
 `define CARRY_BIT `DATA_WIDTH
 
-// CHANGE TO DUAL READ TO AVOID THE STATE MACHINE
+`define ALU_OP 4'b0001 // The top nibble of operator byte determines if ALU operation (where all 3 addresses are used)
 
 module alu_register_verilog (
 
@@ -39,7 +39,7 @@ module alu_register_verilog (
     // If the op code indicates an ALU operation, we write the ALU result.
     // Otherwise, we write the external reg_write_data.
     wire [`MSB:0] final_write_data;
-    assign final_write_data = (operator[15:12] == 4'b0000) ? alu_result : reg_write_data;
+    assign final_write_data = (operator[15:12] == `ALU_OP) ? alu_result : reg_write_data;
 
     // External read output shows whatever is on Port 1
     assign reg_read_data = reg_out_port;

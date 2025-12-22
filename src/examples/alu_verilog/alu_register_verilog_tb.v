@@ -1,14 +1,14 @@
 `timescale 1ns / 1ps  // Set time units
 
-
+// ALU and Register Testbench
 
 module alu_verilog_tb;
 
-    localparam OP_ADD = 8'h00;
-    localparam OP_SUB = 8'h01;
-    localparam OP_AND = 8'h02;
-    localparam OP_OR  = 8'h03;
-    localparam OP_XOR = 8'h04;
+    localparam OP_ADD = 8'h10;
+    localparam OP_SUB = 8'h11;
+    localparam OP_AND = 8'h12;
+    localparam OP_OR  = 8'h13;
+    localparam OP_XOR = 8'h14;
 
     // Inputs are registers (reg) because we drive them
     reg clk;
@@ -42,32 +42,32 @@ module alu_verilog_tb;
 
         // Load register 1 with data
         @(negedge clk); 
-        main_operator = 16'b0001_0001_0000_0001;
+        main_operator = 16'b0010_0001_0000_0001;
         main_operand = 16'd4; // decimal 2
         
         // Load register 2 with data
         @(negedge clk); 
-        main_operator = 16'b0001_0001_0000_0010;
+        main_operator = 16'b0010_0001_0000_0010;
         main_operand = 16'd5; // decimal 3
 
         // Generate ALU operator and operand as if it came from ROM
         @(negedge clk);     
-        main_operator = {OP_XOR, 4'h0, 4'h3}; // Add R3
-        main_operand =  16'b0000_0010_0000_0001; // R2 R1
+        main_operator = {OP_ADD, 4'h0, 4'h3}; // Add R3
+        main_operand =  16'b0001_0010_0000_0001; // R2 R1
 
         // Read the result from register 3
         @(negedge clk);
-        main_operator = 16'b0001_0010_0000_0011;
+        main_operator = 16'b0010_0010_0000_0011;
         main_operand =  16'b0000_0000_0000_0000; // R2 R1
 
         // Generate ALU operator and operand as if it came from ROM
         @(negedge clk);     
-        main_operator = {OP_ADD, 4'h0, 4'h3}; // Add R3
+        main_operator = {OP_XOR, 4'h0, 4'h3}; // XOR R3
         main_operand =  16'b0000_0010_0000_0001; // R2 R1
 
         // Read the result from register 3
         @(negedge clk);
-        main_operator = 16'b0001_0010_0000_0011;
+        main_operator = 16'b0010_0010_0000_0011;
         main_operand =  16'b0000_0000_0000_0000; // R2 R1
 
         #50;

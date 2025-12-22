@@ -1,9 +1,9 @@
 // A dual read register
 
 // OPERATIONS
-`define READ_OP 8'b0001_0010
-`define WRITE_OP 8'b0001_0001
-`define ALU_OP 4'b0000 // The top nibble of operator byte determines if ALU operation (where all 3 addresses are used)
+`define READ_OP 8'b0010_0010
+`define WRITE_OP 8'b0010_0001
+`define ALU_OP 4'b0001 // The top nibble of operator byte determines if ALU operation (where all 3 addresses are used)
 
 // Module configuration
 `define DATA_WIDTH 16

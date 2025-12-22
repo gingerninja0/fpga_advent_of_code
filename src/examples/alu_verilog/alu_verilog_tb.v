@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps  // Set time units
 
+// ALU Testbench
+
 module alu_verilog_tb;
 
     // Inputs are registers (reg) because we drive them
@@ -34,7 +36,7 @@ module alu_verilog_tb;
         reset = 1;
         a = 8'b11111111; // Example input A
         b = 8'b00000001; // Example input B
-        op = 16'b0000000000000000; // Example operation code (addition)
+        op = 16'b0001_0000_0000_0000; // Example operation code (addition)
 
         // Wait 20ns, then release reset
         #20 reset = 0;
