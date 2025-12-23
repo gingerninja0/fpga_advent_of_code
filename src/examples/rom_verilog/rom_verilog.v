@@ -8,7 +8,7 @@
 
 // Define the module
 module  rom_verilog (
-    input wire [`MSB:0] addr,   // 8-bit op-code for the ALU operation selection
+    input wire [`MSB:0] addr,   // 16 bit ROM addressing
     output reg [`MSB:0] read_operator, // Read the operator (upper 16 bits)
     output reg [`MSB:0] read_operand // Read the operand (lower 16 bits)
 );
