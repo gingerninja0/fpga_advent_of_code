@@ -3,13 +3,13 @@
 `define MSB (`DATA_WIDTH - 1)
 `define CARRY_BIT `DATA_WIDTH
 
-`define RAM_OP 4'b0100 // The top nibble of operator byte determines if ROM operation
+`define RAM_OP 4'b0100 // The top nibble of operator byte determines if RAM operation
 
 // Define the module
 module  ram_verilog (
     input wire clk,
     input wire reset,
-    input wire [`MSB:0] opcode, // This is the op code sent to every module, used here to determine the mode of operation
+    input wire [`MSB:0] opcode, // This is the opcode code sent to every module, used here to determine the mode of operation
     input wire [`MSB:0] operand, // 8 bit RAM address (we don't need that much)
     input wire [`MSB:0] write_data,
     output reg [`MSB:0] read_data

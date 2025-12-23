@@ -3,13 +3,13 @@
 `define MSB (`DATA_WIDTH - 1)
 `define CARRY_BIT `DATA_WIDTH
 
-`define PC_OP 4'b0111 // The top nibble of operator byte determines if ROM operation
+`define PC_OP 4'b0111 // The top nibble of operator byte determines if PC operation
 
 // Define the module
 module  pc_verilog (
     input wire clk,
     input wire reset,
-    input wire [`MSB:0] op,
+    input wire [`MSB:0] opcode,
     input wire [`MSB:0] operand,
     input wire [3:0] flags, // ALU flags for branching (X|X|C|Z)
     output reg [`MSB:0] pc // Program counter value
@@ -25,8 +25,8 @@ module  pc_verilog (
     wire [3:0] pc_op_select; // Select register operation (so it can be used in combination with the ALU)
     wire [3:0] pc_op_operation; // Select register operation (so it can be used in combination with the ALU)
 
-    assign pc_op_select = op[15:12];
-    assign pc_op_operation = op[11:8];
+    assign pc_op_select = opcode[15:12];
+    assign pc_op_operation = opcode[11:8];
 
 
     always@(posedge clk) begin

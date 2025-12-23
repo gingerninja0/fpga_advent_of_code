@@ -9,7 +9,7 @@
 module  alu_verilog (
     input wire clk,        // Clock signal
     input wire reset,      // Reset signal (active high)
-    input wire [`MSB:0] op,   // 8-bit op-code for the ALU operation selection
+    input wire [`MSB:0] opcode,   // 8-bit opcode-code for the ALU operation selection
     input wire [`MSB:0] a, // DATA_WIDTH input A
     input wire [`MSB:0] b, // DATA_WIDTH input B
     output reg [`MSB:0] c, // DATA_WIDTH output C (reg stores the value)
@@ -21,8 +21,8 @@ module  alu_verilog (
     wire [3:0] alu_op_select; // Select register operation (so it can be used in combination with the ALU)
     wire [3:0] alu_op_operation; // Select register operation (so it can be used in combination with the ALU)
 
-    assign alu_op_select = op[15:12];
-    assign alu_op_operation = op[11:8];
+    assign alu_op_select = opcode[15:12];
+    assign alu_op_operation = opcode[11:8];
 
     // This block triggers every time clk goes from 0 to 1
     // or reset goes from 0 to 1 (asynchronous reset)
