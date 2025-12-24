@@ -21,7 +21,7 @@ module processor_verilog (
     // Store data before ALU operations (after register reads)
     wire [`MSB:0] opcode_bus;
     wire [`MSB:0] operand_bus;
-    reg [`MSB:0] data_bus;
+    wire [`MSB:0] data_bus;
     wire [`MSB:0] alu_out;  
     wire [`MSB:0] pc_out;  
     wire [`MSB:0] ram_out;
@@ -30,7 +30,7 @@ module processor_verilog (
     // Connect the internal data_bus to the external output wire
     assign data_output = data_bus;
 
-    // Line 68 is likely around here:
+    // Temporary, need to change this later, need a tri state buffer
     always @(*) begin
         case (opcode_bus[15:12])
             4'b0001: data_bus = alu_out;

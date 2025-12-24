@@ -12,7 +12,7 @@ module  pc_verilog (
     input wire [`MSB:0] opcode,
     input wire [`MSB:0] operand,
     input wire [3:0] flags, // ALU flags for branching (X|X|C|Z)
-    output reg [`MSB:0] pc // Program counter value
+    output wire [`MSB:0] pc // Program counter value
 );
 
     localparam PC_JMP = 4'h0;
@@ -28,28 +28,31 @@ module  pc_verilog (
     assign pc_op_select = opcode[15:12];
     assign pc_op_operation = opcode[11:8];
 
+    reg [`MSB:0] pc_register;
+
+    assign pc_register = pc;
 
     always@(posedge clk) begin
 
         if (reset) begin
-            pc <= 0;
+            pc_register <= 0;
         end else begin
             if (pc_op_select == `PC_OP) begin
 
                 case(pc_op_operation)
-                    PC_JMP: pc <= operand;
-                    PC_JMPC: pc <= (flags[1] == 1'b1) ? operand : pc + 1'b1;
-                    PC_JMPZ: pc <= (flags[0] == 1'b1) ? operand : pc + 1'b1;
-                    PC_JMP_REL: pc <= pc + operand;
-                    PC_JMPC_REL: pc <= (flags[1] == 1'b1) ? pc + operand : pc + 1'b1;
-                    PC_JMPZ_REL: pc <= (flags[0] == 1'b1) ? pc + operand : pc + 1'b1;
-                    default: pc <= pc + 1'b1;
+                    PC_JMP: pc_register <= operand;
+                    PC_JMPC: pc_register <= (flags[1] == 1'b1) ? operand : pc_register + 1'b1;
+                    PC_JMPZ: pc_register <= (flags[0] == 1'b1) ? operand : pc_register + 1'b1;
+                    PC_JMP_REL: pc_register <= pc_register + operand;
+                    PC_JMPC_REL: pc_register <= (flags[1] == 1'b1) ? pc_register + operand : pc_register + 1'b1;
+                    PC_JMPZ_REL: pc_register <= (flags[0] == 1'b1) ? pc_register + operand : pc_register + 1'b1;
+                    default: pc_register <= pc_register + 1'b1;
                 endcase
 
             end else begin
                 // The endless passage of time towards order...
                 // (The program counter increases every clock cycle)
-                pc <= pc + 1'b1;
+                pc_register <= pc_register + 1'b1;
             end
         end
 
