@@ -15,8 +15,14 @@ module  rom_verilog (
 
     reg [`ROM_MSB:0] rom_array [0:`MSB]; // 32 bit ROM (to store the operator and operand)
 
+    integer i;
+
     // Load memory contents from program file
     initial begin
+        
+        for (i = 0; i < `DATA_WIDTH; i = i + 1) rom_array[i] = 32'h0;
+        
+        // Load your program
         $readmemh("program.mem", rom_array);
     end
 

@@ -15,29 +15,22 @@ module processor_verilog (
     input wire reset,
 
     // Interface
-    output wire [`MSB:0] data_output
+    output wire [`MSB:0] data_output,
+    output wire [2:0] current_state_output,
+    output wire [`MSB:0] pc_output
 );
 
     // Store data before ALU operations (after register reads)
     wire [`MSB:0] opcode_bus;
     wire [`MSB:0] operand_bus;
     wire [`MSB:0] data_bus;
-    wire [`MSB:0] alu_out;  
-    wire [`MSB:0] pc_out;  
-    wire [`MSB:0] ram_out;
     wire [3:0] flags_bus;
+
+    // Control wires
+    reg alu_read_enable, pc_read_enable, ram_read_enable, pc_enable;
 
     // Connect the internal data_bus to the external output wire
     assign data_output = data_bus;
-
-    // Temporary, need to change this later, need a tri state buffer
-    always @(*) begin
-        case (opcode_bus[15:12])
-            4'b0001: data_bus = alu_out;
-            4'b0100: data_bus = ram_out;
-            default: data_bus = pc_out;
-        endcase
-    end
     
     // Modules
     alu_register_verilog alu(
@@ -45,17 +38,20 @@ module processor_verilog (
         .reset(reset),
         .opcode(opcode_bus),
         .operand(operand_bus),
-        .reg_read_data(alu_out),
-        .alu_flags(flags_bus)
+        .reg_read_data(data_bus),
+        .alu_flags(flags_bus),
+        .read_enable(alu_read_enable)
     );
 
     pc_verilog pc(
         .clk(clk),
         .reset(reset),
+        .pc_enable(pc_enable),
         .opcode(opcode_bus),
         .operand(operand_bus),
         .flags(flags_bus),
-        .pc(data_bus)
+        .pc(data_bus),
+        .read_enable(pc_read_enable)
     );
 
     ram_verilog ram(
@@ -64,7 +60,8 @@ module processor_verilog (
         .opcode(opcode_bus),
         .operand(operand_bus),
         .write_data(data_bus),
-        .read_data(data_bus)
+        .read_data(data_bus),
+        .read_enable(ram_read_enable)
     );
 
     rom_verilog rom(
@@ -76,9 +73,71 @@ module processor_verilog (
 
     // Fetch-Decode-Execute State Machine
 
-    // Do things
+    localparam START = 3'd0;
+    localparam S1    = 3'd1;
+    localparam S2    = 3'd2;
+    localparam S3    = 3'd3;
+    localparam S4    = 3'd4;
+    reg [2:0] current_state, next_state;
 
+    assign current_state_output = current_state;
 
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            current_state <= START;
+        end else begin
+            current_state <= next_state;
+        end
+    end
+
+    always @* begin
+        next_state = current_state; // Default to staying in the current state
+        case (current_state)
+            START: begin
+                next_state = S1;
+            end
+            S1: begin
+                next_state = S2;
+            end
+            S2: begin
+                next_state = S3;
+            end
+            S3: begin
+                next_state = S4;
+            end
+            S4: begin
+                next_state = START;
+            end
+            default: begin
+                next_state = START; // Handle unexpected states
+            end
+        endcase
+    end
+
+    always @* begin
+        // Zero all control lines after clock cycle
+        pc_read_enable = 1'b0;
+        pc_enable = 1'b0;
+
+        case (current_state)
+            START: begin
+                pc_read_enable = 1'b1;
+                pc_enable = 1'b1;
+            end
+            S1: begin
+                
+            end
+            S2: begin
+                
+            end
+            S3: begin
+                
+            end
+            S4: begin
+                
+            end
+        endcase
+    end
 
 endmodule
 

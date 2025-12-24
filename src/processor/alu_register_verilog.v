@@ -14,6 +14,7 @@ module alu_register_verilog (
     input wire [`MSB:0] opcode,
     input wire [`MSB:0] operand,
     output wire [`MSB:0] reg_read_data,
+    input wire read_enable,
 
     // ALU operations
     output wire [3:0] alu_flags
@@ -42,7 +43,7 @@ module alu_register_verilog (
     assign final_write_data = (opcode[15:12] == `ALU_OP) ? alu_result : reg_write_data;
 
     // External read output shows whatever is on Port 1
-    assign reg_read_data = reg_out_port;
+    assign reg_read_data = read_enable ? reg_out_port : 16'bz;
     
     // Define register
     dual_read_register_verilog register(

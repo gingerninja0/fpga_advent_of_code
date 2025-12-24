@@ -12,6 +12,7 @@ module  ram_verilog (
     input wire [`MSB:0] opcode, // This is the opcode code sent to every module, used here to determine the mode of operation
     input wire [`MSB:0] operand, // 8 bit RAM address (we don't need that much)
     input wire [`MSB:0] write_data,
+    input wire read_enable,
     output reg [`MSB:0] read_data
 );
 
@@ -36,10 +37,10 @@ module  ram_verilog (
                 read_data <= `DATA_WIDTH'b0; // Ensure the read data is cleared when writing, makes it act like single port RAM
             end
             {`RAM_OP, RAM_READ}: begin
-                read_data <= ram_array[addr]; 
+                read_data <= read_enable ? ram_array[addr] : 16'bz; 
             end
             default: begin
-                read_data <= `DATA_WIDTH'b0; // Clear output for all other opcodes
+                read_data <= 16'bz; // Clear output for all other opcodes
             end
         endcase
     end

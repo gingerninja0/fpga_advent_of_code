@@ -9,10 +9,13 @@
 module  pc_verilog (
     input wire clk,
     input wire reset,
+    input wire pc_enable,
     input wire [`MSB:0] opcode,
     input wire [`MSB:0] operand,
     input wire [3:0] flags, // ALU flags for branching (X|X|C|Z)
-    output wire [`MSB:0] pc // Program counter value
+    input wire read_enable,
+    output wire [`MSB:0] pc, // Program counter value
+    output wire [`MSB:0] pc_debug_output
 );
 
     localparam PC_JMP = 4'h0;
@@ -30,7 +33,8 @@ module  pc_verilog (
 
     reg [`MSB:0] pc_register;
 
-    assign pc_register = pc;
+    assign pc = read_enable ? pc_register : 16'bz;
+    assign pc_debug_output = pc_register;
 
     always@(posedge clk) begin
 
