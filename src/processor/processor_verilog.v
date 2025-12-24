@@ -17,7 +17,9 @@ module processor_verilog (
     // Interface
     output wire [`MSB:0] data_output,
     output wire [2:0] current_state_output,
-    output wire [`MSB:0] pc_output
+    output wire [`MSB:0] pc_output,
+    output wire [`MSB:0] opcode_bus_output,
+    output wire [`MSB:0] operand_bus_output
 );
 
     // Store data before ALU operations (after register reads)
@@ -31,6 +33,8 @@ module processor_verilog (
 
     // Connect the internal data_bus to the external output wire
     assign data_output = data_bus;
+    assign opcode_bus_output = opcode_bus;
+    assign operand_bus_output = operand_bus;
     
     // Modules
     alu_register_verilog alu(
@@ -51,7 +55,8 @@ module processor_verilog (
         .operand(operand_bus),
         .flags(flags_bus),
         .pc(data_bus),
-        .read_enable(pc_read_enable)
+        .read_enable(pc_read_enable),
+        .pc_debug_output(pc_output)
     );
 
     ram_verilog ram(
@@ -118,11 +123,13 @@ module processor_verilog (
         // Zero all control lines after clock cycle
         pc_read_enable = 1'b0;
         pc_enable = 1'b0;
+        alu_read_enable = 1'b0;
+        ram_read_enable = 1'b0;
 
         case (current_state)
             START: begin
                 pc_read_enable = 1'b1;
-                pc_enable = 1'b1;
+                
             end
             S1: begin
                 
@@ -134,7 +141,7 @@ module processor_verilog (
                 
             end
             S4: begin
-                
+                pc_enable = 1'b1;
             end
         endcase
     end
