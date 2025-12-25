@@ -12,6 +12,7 @@ module  pc_verilog (
     input wire pc_enable,
     input wire [`MSB:0] opcode,
     input wire [`MSB:0] operand,
+    input wire [`MSB:0] data,
     input wire [3:0] flags, // ALU flags for branching (X|X|C|Z)
     input wire read_enable,
     output wire [`MSB:0] pc, // Program counter value

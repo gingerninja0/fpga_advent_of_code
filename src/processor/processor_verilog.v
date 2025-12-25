@@ -55,6 +55,7 @@ module processor_verilog (
         .pc_enable(pc_enable),
         .opcode(opcode_bus),
         .operand(operand_bus),
+        .data(data_bus),
         .flags(flags_bus),
         .pc(data_bus),
         .read_enable(pc_read_enable),
@@ -137,12 +138,12 @@ module processor_verilog (
         alu_write_enable     = 1'b0;
 
         case (current_state)
-            START: begin
+            START: begin // FETCH
                 pc_read_enable = 1'b1;
                 rom_enable = 1'b1;
             end
-            S1: begin
-                
+            S1: begin // DECODE
+
                 if (opcode_bus == 16'b0) begin
                     $display("Halt instruction detected. Ending simulation.");
                     $finish;
@@ -170,13 +171,20 @@ module processor_verilog (
                     ram_read_enable = 1'b1;
                     alu_write_enable = 1'b1;
                 end
+                // REG -> RAM
+                else if (opcode_bus[15:8] == 8'h91) begin
+                    ram_write_enable = 1'b1;
+                    alu_read_enable = 1'b1;
+                end
 
             end
-            S2: begin
-
+            S2: begin // EXECUTE (ALU Operations)
+                if (opcode_bus[15:12] == 8'b0001) begin
+                    alu_write_enable = 1'b1;
+                end
             end
-            S3: begin
-                
+            S3: begin // MISC
+                // JUMPS                
             end
             S4: begin
                 pc_enable = 1'b1;
