@@ -13,8 +13,10 @@ module alu_register_verilog (
     // Interface
     input wire [`MSB:0] opcode,
     input wire [`MSB:0] operand,
+    input wire [`MSB:0] reg_write_data,
     output wire [`MSB:0] reg_read_data,
     input wire read_enable,
+    input wire write_enable,
 
     // ALU operations
     output wire [3:0] alu_flags
@@ -31,10 +33,6 @@ module alu_register_verilog (
     assign alu_addr_1 = operand[3:0];
     assign alu_addr_2 = operand[11:8];
     assign alu_addr_3 = opcode[3:0];
-
-    wire [`MSB:0] reg_write_data;
-
-    assign reg_write_data = operand; // Write immediate for now NEED TO UPDATE THIS
 
     // Logic to select what data gets written to the register
     // If the opcode indicates an ALU operation, we write the ALU result.
@@ -54,6 +52,7 @@ module alu_register_verilog (
         .addr_2(alu_addr_2),
         .addr_3(alu_addr_3),
         .write_data(final_write_data),
+        .write_enable(write_enable),
         .read_data_1(reg_a_data),
         .read_data_2(reg_b_data),
         .read_data_reg(reg_out_port)

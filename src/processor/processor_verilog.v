@@ -29,7 +29,7 @@ module processor_verilog (
     wire [3:0] flags_bus;
 
     // Control wires
-    reg alu_read_enable, pc_read_enable, ram_read_enable, pc_enable, rom_enable;
+    reg alu_read_enable, pc_read_enable, ram_read_enable, pc_enable, rom_enable, rom_read_data_enable, ram_write_enable, alu_write_enable;
 
     // Connect the internal data_bus to the external output wire
     assign data_output = data_bus;
@@ -42,9 +42,11 @@ module processor_verilog (
         .reset(reset),
         .opcode(opcode_bus),
         .operand(operand_bus),
+        .reg_write_data(data_bus),
         .reg_read_data(data_bus),
         .alu_flags(flags_bus),
-        .read_enable(alu_read_enable)
+        .read_enable(alu_read_enable),
+        .write_enable(alu_write_enable)
     );
 
     pc_verilog pc(
@@ -66,14 +68,17 @@ module processor_verilog (
         .operand(operand_bus),
         .write_data(data_bus),
         .read_data(data_bus),
+        .write_enable(ram_write_enable),
         .read_enable(ram_read_enable)
     );
 
     rom_verilog rom(
         .addr(data_bus),
         .rom_enable(rom_enable),
+        .rom_read_data_enable(rom_read_data_enable),
         .read_opcode(opcode_bus),
-        .read_operand(operand_bus)
+        .read_operand(operand_bus),
+        .read_data(data_bus)
     );
 
 
@@ -127,6 +132,8 @@ module processor_verilog (
         alu_read_enable = 1'b0;
         ram_read_enable = 1'b0;
         rom_enable = 1'b0;
+        rom_read_data_enable = 1'b0;
+        ram_write_enable = 1'b0;
 
         case (current_state)
             START: begin
@@ -134,15 +141,38 @@ module processor_verilog (
                 rom_enable = 1'b1;
             end
             S1: begin
+                
+                if (opcode_bus == 16'b0) begin
+                    $display("Halt instruction detected. Ending simulation.");
+                    $finish;
+                end
+
+                // ALU/REG -> Output
                 if (opcode_bus[15:8] == 8'b0010_0010) begin
                     alu_read_enable = 1'b1;
                 end
-                else if (opcode_bus[15:8] == 8'b0100_0010) begin
+                // RAM -> Output
+                else if (opcode_bus[15:8] == 8'h42) begin
                     ram_read_enable = 1'b1;
                 end
+                // Immediate -> RAM
+                else if ((opcode_bus[15:8] == 8'h41)) begin
+                    ram_write_enable = 1'b1;
+                end
+                // ROM -> RAM
+                else if (opcode_bus[15:8] == 8'h31) begin
+                    rom_read_data_enable = 1'b1;
+                    ram_write_enable = 1'b1;
+                end
+                // ROM -> REG
+                else if (opcode_bus[15:8] == 8'h31) begin
+                    ram_read_enable = 1'b1;
+                    alu_write_enable = 1'b1;
+                end
+
             end
             S2: begin
-                
+
             end
             S3: begin
                 

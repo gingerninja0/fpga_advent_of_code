@@ -10,9 +10,13 @@
 module  rom_verilog (
     input wire [`MSB:0] addr,   // 16 bit ROM addressing
     input wire rom_enable,
+    input wire rom_read_data_enable,
     output reg [`MSB:0] read_opcode, // Read the operator (upper 16 bits)
-    output reg [`MSB:0] read_operand // Read the operand (lower 16 bits)
+    output reg [`MSB:0] read_operand, // Read the operand (lower 16 bits)
+    output reg [`MSB:0] read_data
 );
+    localparam ROM_DATA_READ = 4'h1;
+
 
     reg [`ROM_MSB:0] rom_array [0:`MSB]; // 32 bit ROM (to store the operator and operand)
 
@@ -31,6 +35,12 @@ module  rom_verilog (
         if (rom_enable) begin
             read_opcode = rom_array[addr][31:16];
             read_operand = rom_array[addr][15:0];
+        end
+
+        if (rom_read_data_enable && (read_opcode[15:8] == {`ROM_OP, ROM_DATA_READ})) begin
+            read_data = read_operand;
+        end else begin
+            read_data = 16'bz; 
         end
     end
     
