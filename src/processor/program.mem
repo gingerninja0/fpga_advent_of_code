@@ -1,9 +1,9 @@
+// ROM -> RAM -> REG -> OUT
+31011234 // Write RAM1 with 0x1234
+92020001 // Load RAM1 into R1
+22020000 // R1 => Out
+00000000
 // ROM -> RAM -> Out
 31021234 // Write RAM2 with 0x1234
 42000002
-00000000
-// ROM - RAM - REG - OUT
-31011234 // Write RAM1 with 0x1234
-42010001 // Load RAM1 into R1
-22010000 // R1 => Out
 00000000

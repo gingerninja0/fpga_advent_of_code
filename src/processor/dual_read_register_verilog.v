@@ -2,7 +2,7 @@
 
 // OPERATIONS
 `define READ_OP 8'b0010_0010
-`define WRITE_RAM_OP 8'b0100_0010
+`define WRITE_RAM_OP 8'b1001_0010
 `define ALU_OP 4'b0001 // The top nibble of operator byte determines if ALU operation (where all 3 addresses are used)
 
 // Module configuration
@@ -26,16 +26,23 @@ module dual_read_register_verilog (
 
     integer i; // For the reset loop
 
-    always @(posedge clk or posedge reset) begin
+    always @(*) begin
         if (reset) begin
             for (i = 0; i < `N_REG; i = i + 1) begin
                 registers[i] <= `DATA_WIDTH'b0;
             end
         end
-        else if ((opcode[15:12] == `ALU_OP) || (opcode[15:8] == `WRITE_RAM_OP)) begin
-            if (write_enable) begin
-                registers[addr_3] <= write_data;
-            end
+        else if (opcode[15:12] == `ALU_OP) begin
+        
+            registers[addr_3] <= write_data;
+            // $strobe("TIME=%0t | REG WRITE (ALU)  | Reg[%0d] <= %h", $time, addr_3, write_data);
+
+        end
+        else if (write_enable && (opcode[15:8] == `WRITE_RAM_OP)) begin
+            
+            registers[addr_3] <= write_data;
+            // $strobe("TIME=%0t | REG WRITE (ALU)  | Reg[%0d] <= %h", $time, addr_3, write_data);
+
         end
     end
 

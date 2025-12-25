@@ -5,7 +5,7 @@
 
 `define RAM_OP 4'b0100 // The top nibble of operator byte determines if RAM operation
 `define ROM_OP 4'b0011 // The top nibble of operator byte determines if ROM operation
-`define REG_OP 4'b0001 // The top nibble of operator byte determines if ALU/REG operation
+`define REG_OP 4'b1001 // The top nibble of operator byte determines if ALU/REG operation
 
 
 // Define the module
@@ -33,12 +33,10 @@ module  ram_verilog (
 
     // Writing to RAM from ROM (RAM Address in opcode)
     always @(*) begin
-        if ({ram_op_select, ram_op_operation} == {`ROM_OP, RAM_WRITE}) begin
+        if ({ram_op_select} == {`ROM_OP}) begin
             addr = opcode[7:0];
-        end else if ({ram_op_select, ram_op_operation} == {`REG_OP, RAM_WRITE}) begin
+        end else begin
             addr = operand[7:0];
-        end else if (ram_op_select == `RAM_OP) begin
-            addr = operand[7:0]; // Default fallback
         end
     end
 
@@ -54,26 +52,26 @@ module  ram_verilog (
         end
     end
 
-    // 1. Debug the WRITE process
-    always @(*) begin
-        case({ram_op_select, ram_op_operation})
-            8'b0011_0001: begin
-                if (write_enable) begin
-                    $display("TIME=%0t | RAM WRITE | Addr:%h | Data:%h", $time, addr, ram_array[addr]);
-                end
-            end
-        endcase
-    end
+    // // 1. Debug the WRITE process
+    // always @(*) begin
+    //     case({ram_op_select, ram_op_operation})
+    //         8'b0011_0001: begin
+    //             if (write_enable) begin
+    //                 $display("TIME=%0t | RAM WRITE | Addr:%h | Data:%h", $time, addr, ram_array[addr]);
+    //             end
+    //         end
+    //     endcase
+    // end
 
-    // 2. Debug the READ process
-    always @(*) begin
-        if (read_enable) begin
-            $display("TIME=%0t | RAM READ ATTEMPT | Op:%h | Addr:%h | ValueInMem:%h", 
-                      $time, opcode, addr, ram_array[addr]);
-        end
-    end
+    // // 2. Debug the READ process
+    // always @(*) begin
+    //     if (read_enable) begin
+    //         $display("TIME=%0t | RAM READ ATTEMPT | Op:%h | Addr:%h | ValueInMem:%h", 
+    //                   $time, opcode, addr, ram_array[addr]);
+    //     end
+    // end
 
     assign read_data = (read_enable && (opcode[15:8] == 8'h42)) ? ram_array[addr] : 16'bz; // RAM -> Output
-    assign read_data = (read_enable && (opcode[15:8] == 8'h12)) ? ram_array[addr] : 16'bz; // RAM -> REG
+    assign read_data = (read_enable && (opcode[15:8] == 8'h92)) ? ram_array[addr] : 16'bz; // RAM -> REG
     
 endmodule

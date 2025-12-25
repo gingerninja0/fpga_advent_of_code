@@ -134,6 +134,7 @@ module processor_verilog (
         rom_enable = 1'b0;
         rom_read_data_enable = 1'b0;
         ram_write_enable = 1'b0;
+        alu_write_enable     = 1'b0;
 
         case (current_state)
             START: begin
@@ -165,7 +166,7 @@ module processor_verilog (
                     ram_write_enable = 1'b1;
                 end
                 // ROM -> REG
-                else if (opcode_bus[15:8] == 8'h31) begin
+                else if (opcode_bus[15:8] == 8'h92) begin
                     ram_read_enable = 1'b1;
                     alu_write_enable = 1'b1;
                 end
