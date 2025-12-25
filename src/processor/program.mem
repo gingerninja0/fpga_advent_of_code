@@ -1,6 +1,4 @@
-00000000 // We can have comments in here too
-12341234
-43214321
-22113344
-FFFFEEEE
-AAAABBBB
+21010004 // Load R1 with 4
+21020005 // Load R2 with 5
+10030201 // R1+R2 => R3
+22030000 // R3 => Out

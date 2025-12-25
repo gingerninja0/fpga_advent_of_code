@@ -9,6 +9,7 @@
 // Define the module
 module  rom_verilog (
     input wire [`MSB:0] addr,   // 16 bit ROM addressing
+    input wire rom_enable,
     output reg [`MSB:0] read_opcode, // Read the operator (upper 16 bits)
     output reg [`MSB:0] read_operand // Read the operand (lower 16 bits)
 );
@@ -27,8 +28,10 @@ module  rom_verilog (
     end
 
     always @(*) begin
-        read_opcode = rom_array[addr][31:16];
-        read_operand = rom_array[addr][15:0];
+        if (rom_enable) begin
+            read_opcode = rom_array[addr][31:16];
+            read_operand = rom_array[addr][15:0];
+        end
     end
     
 endmodule

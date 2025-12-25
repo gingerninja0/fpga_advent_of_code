@@ -39,7 +39,7 @@ module processor_verilog_tb;
         #20 reset = 0;
         @(negedge clk); 
 
-        #100;
+        #300;
 
         // End simulation
         $display("Simulation finished.");

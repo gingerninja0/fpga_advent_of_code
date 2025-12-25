@@ -29,7 +29,7 @@ module processor_verilog (
     wire [3:0] flags_bus;
 
     // Control wires
-    reg alu_read_enable, pc_read_enable, ram_read_enable, pc_enable;
+    reg alu_read_enable, pc_read_enable, ram_read_enable, pc_enable, rom_enable;
 
     // Connect the internal data_bus to the external output wire
     assign data_output = data_bus;
@@ -71,6 +71,7 @@ module processor_verilog (
 
     rom_verilog rom(
         .addr(data_bus),
+        .rom_enable(rom_enable),
         .read_opcode(opcode_bus),
         .read_operand(operand_bus)
     );
@@ -125,14 +126,20 @@ module processor_verilog (
         pc_enable = 1'b0;
         alu_read_enable = 1'b0;
         ram_read_enable = 1'b0;
+        rom_enable = 1'b0;
 
         case (current_state)
             START: begin
                 pc_read_enable = 1'b1;
-                
+                rom_enable = 1'b1;
             end
             S1: begin
-                
+                if (opcode_bus[15:8] == 8'b0010_0010) begin
+                    alu_read_enable = 1'b1;
+                end
+                else if (opcode_bus[15:8] == 8'b0100_0010) begin
+                    ram_read_enable = 1'b1;
+                end
             end
             S2: begin
                 
