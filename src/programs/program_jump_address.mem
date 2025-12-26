@@ -1,0 +1,9 @@
+// RAM Jump address example
+31030006 // Write RAM3 with Val (0x1234) (to display later)
+31020007 // Write RAM2 with jump to value
+70000002 // Jump to value stored in RAM2
+00000000 // We jump over this HALT
+42000003 // RAM3 => Out
+00000000 // HALT
+00001234 // Val = 0x1234
+00000004 // Jump to address 4 (this gets loaded into RAM2)

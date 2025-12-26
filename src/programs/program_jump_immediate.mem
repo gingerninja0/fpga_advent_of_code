@@ -1,0 +1,7 @@
+// ROM Jump immediate example
+31030005 // Write RAM3 with Val (0x1234) (to display later)
+f0000003 // Jump immediate (3)
+00000000 // We jump over this HALT
+42000003 // RAM3 => Out
+00000000 // HALT
+00001234 // Val = 0x1234

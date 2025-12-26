@@ -1,0 +1,23 @@
+// ROM -> RAM ->REG -> ALU -> OUT
+3103000b // Write RAM3 with Va1 1
+3104000c // Write RAM4 with Va1 2
+92010003 // Load RAM3 into R1
+22010000 // R1 => Out
+92020004 // Load RAM4 into R2
+22020000 // R2 => Out
+10030102 // R1 + R2 = R3
+22030000 // R3 => Out
+91030008 // Load R3 into RAM8
+42000008 // RAM8 => Out
+00000000
+00000004 // Val 1 (4)
+00000005 // Val 2 (5)
+// ROM -> RAM -> REG -> OUT
+31011234 // Write RAM1 with 0x1234
+92020001 // Load RAM1 into R2
+22020000 // R2 => Out
+00000000
+// ROM -> RAM -> Out
+31021234 // Write RAM2 with 0x1234
+42000002 // RAM2 => Out
+00000000
