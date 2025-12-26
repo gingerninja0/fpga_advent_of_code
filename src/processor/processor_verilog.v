@@ -15,11 +15,12 @@ module processor_verilog (
     input wire reset,
 
     // Interface
-    output wire [`MSB:0] data_output,
+    output reg [`MSB:0] data_output,
     output wire [2:0] current_state_output,
     output wire [`MSB:0] pc_output,
     output wire [`MSB:0] opcode_bus_output,
-    output wire [`MSB:0] operand_bus_output
+    output wire [`MSB:0] operand_bus_output,
+    output wire [3:0] flags_bus_output
 );
 
     // Store data before ALU operations (after register reads)
@@ -31,10 +32,10 @@ module processor_verilog (
     // Control wires
     reg alu_read_enable, pc_read_enable, ram_read_enable, pc_enable, rom_enable, rom_read_data_enable, ram_write_enable, alu_write_enable;
 
-    // Connect the internal data_bus to the external output wire
-    assign data_output = data_bus;
+    // Connect the internal data_bus to the external output wire 
     assign opcode_bus_output = opcode_bus;
     assign operand_bus_output = operand_bus;
+    assign flags_bus_output = flags_bus;
     
     // Modules
     alu_register_verilog alu(
@@ -89,7 +90,6 @@ module processor_verilog (
     localparam S1    = 3'd1;
     localparam S2    = 3'd2;
     localparam S3    = 3'd3;
-    localparam S4    = 3'd4;
     reg [2:0] current_state, next_state;
 
     assign current_state_output = current_state;
@@ -115,9 +115,6 @@ module processor_verilog (
                 next_state = S3;
             end
             S3: begin
-                next_state = S4;
-            end
-            S4: begin
                 next_state = START;
             end
             default: begin
@@ -136,6 +133,7 @@ module processor_verilog (
         rom_read_data_enable = 1'b0;
         ram_write_enable = 1'b0;
         alu_write_enable     = 1'b0;
+        // data_output =6'b0;
 
         case (current_state)
             START: begin // FETCH
@@ -152,10 +150,12 @@ module processor_verilog (
                 // ALU/REG -> Output
                 if (opcode_bus[15:8] == 8'b0010_0010) begin
                     alu_read_enable = 1'b1;
+                    data_output = data_bus;
                 end
                 // RAM -> Output
                 else if (opcode_bus[15:8] == 8'h42) begin
                     ram_read_enable = 1'b1;
+                    data_output = data_bus;
                 end
                 // Immediate -> RAM
                 else if ((opcode_bus[15:8] == 8'h41)) begin
@@ -176,8 +176,6 @@ module processor_verilog (
                     ram_write_enable = 1'b1;
                     alu_read_enable = 1'b1;
                 end
-                
-
             end
             S2: begin // EXECUTE (ALU Operations)
                 if (opcode_bus[15:12] == 8'b0001) begin
@@ -185,10 +183,7 @@ module processor_verilog (
                 end
                 
             end
-            S3: begin // MISC
-                // JUMPS                
-            end
-            S4: begin
+            S3: begin
 
                 // Jump -> [RAM Address]
                 if (opcode_bus[15:12] == 4'h7) begin

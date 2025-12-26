@@ -54,23 +54,23 @@ module  ram_verilog (
     end
 
     // 1. Debug the WRITE process
-    always @(*) begin
-        case({ram_op_select, ram_op_operation})
-            8'b0011_0001, 8'b1001_0001: begin
-                if (write_enable) begin
-                    $display("TIME=%0t | RAM WRITE | Addr:%h | Data:%h", $time, addr, ram_array[addr]);
-                end
-            end
-        endcase
-    end
+    // always @(*) begin
+    //     case({ram_op_select, ram_op_operation})
+    //         8'b0011_0001, 8'b1001_0001: begin
+    //             if (write_enable) begin
+    //                 $display("TIME=%0t | RAM WRITE | Addr:%h | Data:%h", $time, addr, ram_array[addr]);
+    //             end
+    //         end
+    //     endcase
+    // end
 
-    // 2. Debug the READ process
-    always @(*) begin
-        if (read_enable) begin
-            $display("TIME=%0t | RAM READ ATTEMPT | Op:%h | Addr:%h | ValueInMem:%h", 
-                      $time, opcode, addr, ram_array[addr]);
-        end
-    end
+    // // 2. Debug the READ process
+    // always @(*) begin
+    //     if (read_enable) begin
+    //         $display("TIME=%0t | RAM READ ATTEMPT | Op:%h | Addr:%h | ValueInMem:%h", 
+    //                   $time, opcode, addr, ram_array[addr]);
+    //     end
+    // end
 
     assign read_data = (read_enable && (opcode[15:8] == {`RAM_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> Output
     assign read_data = (read_enable && (opcode[15:8] == {`REG_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> REG

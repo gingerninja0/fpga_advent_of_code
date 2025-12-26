@@ -12,6 +12,7 @@ module processor_verilog_tb;
     wire [15:0] data_output;
     wire [15:0] opcode_bus_output;
     wire [15:0] operand_bus_output;
+    wire [3:0] flags_bus_output;
     wire [2:0] current_state;
     wire [15:0] pc_output;
 
@@ -24,7 +25,8 @@ module processor_verilog_tb;
         .current_state_output(current_state),
         .pc_output(pc_output),
         .opcode_bus_output(opcode_bus_output),
-        .operand_bus_output(operand_bus_output)
+        .operand_bus_output(operand_bus_output),
+        .flags_bus_output(flags_bus_output)
     );
 
     // Generate the clock signal (toggle every 5ns for a 10ns period)
@@ -48,7 +50,8 @@ module processor_verilog_tb;
 
     // Monitor the changes in the console
     initial begin
-        $monitor("Time=%t | PC=%h | STATE=%h | Data bus value=%h | opcode=%h | operand=%h", $time, pc_output, current_state, data_output, opcode_bus_output, operand_bus_output);
+        // $monitor("Time=%t | PC=%h | STATE=%h | Data bus value=%h | opcode=%h | operand=%h | ALU flags=%b", $time, pc_output, current_state, data_output, opcode_bus_output, operand_bus_output, flags_bus_output);
+        $monitor("Time=%t | Output=%d", $time, data_output);
     end
 
 endmodule

@@ -30,7 +30,7 @@ module  alu_verilog (
 
         if (reset) begin
             c = `DATA_WIDTH'b0;
-            flags = 4'b0; 
+            flags = 4'b0001; // By default the ALU result is 0, therefore the flags should reflect this
             operation_result = `DATA_WIDTH'b0;
         end else begin
             case({alu_op_select, alu_op_operation})
