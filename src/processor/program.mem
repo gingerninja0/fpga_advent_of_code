@@ -1,3 +1,17 @@
+// Day 1 Part 1
+310a00NUM_INPUT_ADDR // Store the current input number in RAM:a
+311000ZERO_CONST_ADDR // Location of zero data to load into RAM for use as a comparison
+920f
+// Start of loop
+
+
+120e0f0
+f100000END_PROGRAM_ADDRESS // Jump to end of program one we've iterated through each input number
+f000000START_OF_LOOP_ADDRESS // Jump to start of loop if we don't jump out from the other check
+00000000 // End program FLAG_END_PROGRAM_ADDRESS
+
+
+
 // Fibonacci Sequence
 3101000a // Load RAM1 with value from ROM addr 10
 3102000b // Load RAM2 with value from ROM addr 11
@@ -13,3 +27,16 @@ f0000004 // Jump immediate back to start of loop at addr 4
 00000000
 00000001 // RAM1 Val
 00000001 // RAM2 Val
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -13,7 +13,7 @@ module  alu_verilog (
     input wire [`MSB:0] a, // DATA_WIDTH input A
     input wire [`MSB:0] b, // DATA_WIDTH input B
     output reg [`MSB:0] c, // DATA_WIDTH output C (reg stores the value)
-    output reg [3:0] flags // 4-bit flags (X|X|C|Z) (to two are spare for now)
+    output reg [3:0] flags // 4-bit flags (O|N|C|Z) (to two are spare for now)
 );
 
     reg [`DATA_WIDTH:0] operation_result; // Holding register of the operation to set flags at the same time as the output register
@@ -51,8 +51,10 @@ module  alu_verilog (
             // Update flags
             if (alu_op_select == `ALU_OP) begin
                 // Only update flags if it's an actual ALU operation
-                flags[0] = (operation_result[`MSB:0] == `DATA_WIDTH'b0) ? 1'b1 : 1'b0;
-                flags[1] = operation_result[`CARRY_BIT];
+                flags[0] = operation_result[`MSB:0] == `DATA_WIDTH'b0; // Result is zero
+                flags[1] = operation_result[`CARRY_BIT]; // Operation resulted in a carry
+                flags[2] = operation_result[`MSB]; // Sign bit
+                flags[3] = (a[`MSB] == b[`MSB]) && (operation_result[`MSB] != a[`MSB]); // Overflow, resulting sign bit does not match inputs (addition resulted in "negative", or subtraction resulted in "positive" due to overflow)
             end else begin
                 // For other operations, hold the flags at the previous state
             end
