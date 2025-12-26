@@ -13,7 +13,7 @@ module  alu_verilog (
     input wire [`MSB:0] a, // DATA_WIDTH input A
     input wire [`MSB:0] b, // DATA_WIDTH input B
     output reg [`MSB:0] c, // DATA_WIDTH output C (reg stores the value)
-    output reg [3:0] flags // 4-bit flags (O|N|C|Z) (to two are spare for now)
+    output reg [3:0] flags // 4-bit flags (O|N|C|Z)
 );
 
     reg [`DATA_WIDTH:0] operation_result; // Holding register of the operation to set flags at the same time as the output register

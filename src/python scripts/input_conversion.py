@@ -34,11 +34,11 @@ for line in lines:
 
 
 print("// Input start")
-print(f"0000{(length & 0xFFFF):04X} // Length of input")
-print(f"00000000 // Data starts after this value") 
+print(f"0000_{(length & 0xFFFF):04X} // Length of input")
+print(f"0000_0000 // Data starts after this value") 
 
 for hex_val in results:
-    print(f"0000{hex_val}")
+    print(f"0000_{hex_val}")
 
 
 print("// Input end")

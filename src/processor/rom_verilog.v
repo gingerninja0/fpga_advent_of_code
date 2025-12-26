@@ -18,7 +18,7 @@ module  rom_verilog (
     localparam ROM_DATA_READ = 4'h1;
 
 
-    reg [`ROM_MSB:0] rom_array [0:`MSB]; // 32 bit ROM (to store the operator and operand)
+    reg [`ROM_MSB:0] rom_array [0:256]; // 32 bit ROM (to store the operator and operand)
 
     integer i;
 

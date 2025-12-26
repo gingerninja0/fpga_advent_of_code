@@ -1,4 +1,51 @@
 // Day 1 Part 1
+// Constants as the start of the code this time, hopefully it'll be easier to keep track of
+f000_0007  // Where the code actually starts, below is Constants
+0000_0000           // Halt if jump fails for any reason
+// Constants, stored in RAM:1X
+0000_0032           // 50d - Initial dial value of 50d (0x32)   2
+0000_0001           // 1d                                       3
+0000_0064           // 100d                                     4
+0000_0063           // 99d                                      5
+0000_0000           // 0d                                       6
+// FIRST LINE OF CODE - Line 7
+// Load constants into RAM:1X
+3110_0002           // 50d in RAM:10
+3111_0003           // 1d in RAM:11
+3112_0004           // 100d in RAM:12
+3113_0005           // 99d in RAM13
+3114_0006           // 0d in RAM14
+3101_00XX           // Length of input in RAM01(FROM ROM: TBD)
+// Load constants into REGs
+9200_0010           // 50d in REG:0
+9201_0011           // 1d in REG:0
+9202_0012           // 100d in REG:0
+9203_0013           // 99d in REG:0
+9204_0014           // 0d in REG:0
+// Load variables
+9208_0001           // [Length of input] in REG:8
+// REG:9 to store 0 count (Output of program)
+// Main Loop Start
+
+// Main Loop End
+0000_0000 // HALT
+// Input start
+0000_000A // Length of input (ADDR TBD)
+0000_0000 // Data starts after this value
+0000_FFBC
+0000_FFE2
+0000_0030
+0000_FFFB
+0000_003C
+0000_FFC9
+0000_FFFF
+0000_FF9D
+0000_000E
+0000_FFAE
+// Input end
+
+
+// Day 1 Part 1
 3101_000d                    // Store the input length in RAM:01 to move to register                                         0
 9201_0001                    // Load REG:1 from RAM:01, contains the current loop number                                     1
 3110_000b                    // Location of zero data to load into RAM:10 for use as a comparison                            2

@@ -51,15 +51,15 @@ module dual_read_register_verilog (
 
     assign read_data_reg = ((opcode[15:8] == `READ_OP) || (opcode[15:8] == `WRITE_RAM_OP)) ? registers[addr_3] : `DATA_WIDTH'bz; // To read the register contents (separate to the ALU, so technically this is a tripple read, however only single or dual read is used at one time)
 
-    // always @(*) begin
-    //     if ((opcode[15:8] == `READ_OP)) begin
-    //         $display("TIME=%0t | REG READ (ALU) addr3 | Reg[%0d] <= %h", $time, addr_3, registers[addr_3]);
-    //     end
-    //     // if ((opcode[15:12] == `ALU_OP)) begin
-    //     //     $display("TIME=%0t | REG READ (ALU) addr1 | Reg[%0d] <= %h", $time, addr_1, registers[addr_1]);
-    //     //     $display("TIME=%0t | REG READ (ALU) addr2 | Reg[%0d] <= %h", $time, addr_2, registers[addr_2]);
-    //     // end
-    // end
+    always @(*) begin
+        if ((opcode[15:8] == `READ_OP)) begin
+            $display("TIME=%0t | REG READ (ALU) addr3 | Reg[%0d] <= %h", $time, addr_3, registers[addr_3]);
+        end
+        // if ((opcode[15:12] == `ALU_OP)) begin
+        //     $display("TIME=%0t | REG READ (ALU) addr1 | Reg[%0d] <= %h", $time, addr_1, registers[addr_1]);
+        //     $display("TIME=%0t | REG READ (ALU) addr2 | Reg[%0d] <= %h", $time, addr_2, registers[addr_2]);
+        // end
+    end
     
 
 endmodule
