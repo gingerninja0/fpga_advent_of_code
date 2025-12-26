@@ -14,6 +14,8 @@ L82
 lines = data.strip().split('\n')
 results = []
 
+length = 0
+
 for line in lines:
     line = line.strip()
 
@@ -28,15 +30,15 @@ for line in lines:
     hex_val = f"{(number & 0xFFFF):04X}"
     
     results.append(hex_val)
-
-print("// Input start")
-
-length = 0
-for hex_val in results:
-    print(f"0000{hex_val}")
     length = length + 1
 
-print(f"00000000")
+
+print("// Input start")
 print(f"0000{(length & 0xFFFF):04X} // Length of input")
+print(f"00000000 // Data starts after this value") 
+
+for hex_val in results:
+    print(f"0000{hex_val}")
+
 
 print("// Input end")
