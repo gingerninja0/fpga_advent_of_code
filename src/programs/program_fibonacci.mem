@@ -1,0 +1,15 @@
+// Fibonacci Sequence
+3101000a // Load RAM1 with value from ROM addr 10
+3102000b // Load RAM2 with value from ROM addr 11
+92010001 // Load RAM1 into R1
+92020002 // Load RAM2 into R2
+// Start of loop
+10010102 // R1 + R2 = R1
+22010000 // R1 => Out
+10020102 // R1 + R2 = R2
+22020000 // R2 => Out
+f0000004 // Jump immediate back to start of loop at addr 4
+// End of loop
+00000000
+00000001 // RAM1 Val
+00000001 // RAM2 Val
