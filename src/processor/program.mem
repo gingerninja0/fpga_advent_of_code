@@ -1,38 +1,54 @@
 // Day 1 Part 1
 // Constants as the start of the code this time, hopefully it'll be easier to keep track of
+// NEED TO DO A TEST OF LOADING A ROM VALUE FROM ADDRESS STORED IN RAM !!!!!!!!!!!!
+//                // Load ROM from address in RAM
+//                else if (opcode_bus[15:8] == 8'h32) begin
+//                    ram_read_enable = 1'b1;
+//                    alu_read_enable = 1'b1;
+//                end
 f000_0007  // Where the code actually starts, below is Constants
-0000_0000           // Halt if jump fails for any reason
+0000_0000           // Halt if jump fails for any reason        1
 // Constants, stored in RAM:1X
 0000_0032           // 50d - Initial dial value of 50d (0x32)   2
 0000_0001           // 1d                                       3
 0000_0064           // 100d                                     4
 0000_0063           // 99d                                      5
-0000_0000           // 0d                                       6
+0000_0021           // 0d                                       6
 // FIRST LINE OF CODE - Line 7
 // Load constants into RAM:1X
-3110_0002           // 50d in RAM:10
-3111_0003           // 1d in RAM:11
-3112_0004           // 100d in RAM:12
-3113_0005           // 99d in RAM13
-3114_0006           // 0d in RAM14
-3101_00XX           // Length of input in RAM01(FROM ROM: TBD)
-// Load constants into REGs
-9200_0010           // 50d in REG:0
-9201_0011           // 1d in REG:0
-9202_0012           // 100d in REG:0
-9203_0013           // 99d in REG:0
-9204_0014           // 0d in REG:0
-// Load variables
-9208_0001           // [Length of input] in REG:8
-// REG:9 to store 0 count (Output of program)
+3110_0002           // 50d in RAM:10 // 7
+3111_0003           // 1d in RAM:11 // 8
+3112_0004           // 100d in RAM:12  //9
+3113_0005           // 99d in RAM:13  // a 
+3114_0001           // 0d in RAM:14  //b
+3115_0006           // Address of first input value in RAM:15 (FROM ROM: START TBD) // c
+// Load constants into REGs 
+9200_0010           // 50d in REG:0 //e
+9201_0011           // 1d in REG:1 //f
+9202_0012           // 100d in REG:2 // 10
+9203_0013           // 99d in REG:3 // 11
+9204_0014           // 0d in REG:4 // 12 
+// Load variables into RAM:2X
+3121_0001           // 0d in RAM:21, RAM:21 and REG:11 to store current input value 13
+3101_001f           // Length of input in RAM:01 (FROM ROM: TBD) // 14
+// Load variables into REGs 
+9208_0001           // [Length of input] in REG:8 from RAM:01 14 
+9209_0014           // REG:9 to store 0 count (Output of program) Initialised to const:0d 15
+920a_0015           // Address of first input value in REG:a from RAM:15 16 // NOT WORKING YET !!!!!!! NEED TO READ FROM RAM VALUE INTO ROM ADDRESS
+920b_0021           // RAM:21 and REG:b to store current input value 17
 // Main Loop Start
-
+2208_0000  // 18
+100f_0804 // 19
+f100_001e // 1a
+1108_0108 // 1b
+2208_0000  // 1c 2nd output command to check subtraction
+f000_0018 // 1d
 // Main Loop End
-0000_0000 // HALT
+0000_0000 // HALT // 1e
 // Input start
-0000_000A // Length of input (ADDR TBD)
-0000_0000 // Data starts after this value
-0000_FFBC
+0000_000A // Length of input (ADDR TBD) // 1f
+0000_0000 // Data starts after this value // 20
+0000_FFBC // (Start TBD) // 21
 0000_FFE2
 0000_0030
 0000_FFFB
