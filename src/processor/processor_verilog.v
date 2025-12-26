@@ -176,18 +176,33 @@ module processor_verilog (
                     ram_write_enable = 1'b1;
                     alu_read_enable = 1'b1;
                 end
+                
 
             end
             S2: begin // EXECUTE (ALU Operations)
                 if (opcode_bus[15:12] == 8'b0001) begin
                     alu_write_enable = 1'b1;
                 end
+                
             end
             S3: begin // MISC
                 // JUMPS                
             end
             S4: begin
-                pc_enable = 1'b1;
+
+                // Jump -> [RAM Address]
+                if (opcode_bus[15:12] == 4'h7) begin
+                    ram_read_enable = 1'b1;
+                    pc_enable = 1'b1;
+                end
+                // Jump -> ROM (Immediate)
+                else if (opcode_bus[15:12] == 4'hf) begin
+                    // ROM outputs the operand for the whole cycle, no control logic to change, we just set the PC value to the operand for jump immediate. This is case is stated here for clarity.
+                    pc_enable = 1'b1;
+                end
+                else begin
+                    pc_enable = 1'b1;
+                end
             end
         endcase
     end

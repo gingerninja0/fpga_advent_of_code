@@ -3,7 +3,8 @@
 `define MSB (`DATA_WIDTH - 1)
 `define CARRY_BIT `DATA_WIDTH
 
-`define PC_OP 4'b0111 // The top nibble of operator byte determines if PC operation
+`define PC_RAM_OP 4'b0111 // PC to Jump from RAM data (at address)
+`define PC_ROM_OP 4'b1111 // PC to Jump from ROM data (immediate)
 
 // Define the module
 module  pc_verilog (
@@ -37,21 +38,32 @@ module  pc_verilog (
     assign pc = read_enable ? pc_register : 16'bz;
     assign pc_debug_output = pc_register;
 
+    reg [`MSB:0] jump_val;
+
+    // Writing to RAM from ROM (RAM Address in opcode)
+    always @(*) begin
+        if ({pc_op_select} == `PC_RAM_OP) begin
+            jump_val = data;
+        end else begin
+            jump_val = operand;
+        end
+    end
+
     always@(posedge clk) begin
 
         if (reset) begin
             pc_register <= 0;
         end else begin
             if (pc_enable) begin
-                if (pc_op_select == `PC_OP) begin
+                if ((pc_op_select == `PC_RAM_OP) || (pc_op_select == `PC_ROM_OP)) begin
 
                     case(pc_op_operation)
-                        PC_JMP: pc_register <= operand;
-                        PC_JMPC: pc_register <= (flags[1] == 1'b1) ? operand : pc_register + 1'b1;
-                        PC_JMPZ: pc_register <= (flags[0] == 1'b1) ? operand : pc_register + 1'b1;
-                        PC_JMP_REL: pc_register <= pc_register + operand;
-                        PC_JMPC_REL: pc_register <= (flags[1] == 1'b1) ? pc_register + operand : pc_register + 1'b1;
-                        PC_JMPZ_REL: pc_register <= (flags[0] == 1'b1) ? pc_register + operand : pc_register + 1'b1;
+                        PC_JMP: pc_register <= jump_val;
+                        PC_JMPC: pc_register <= (flags[1] == 1'b1) ? jump_val : pc_register + 1'b1;
+                        PC_JMPZ: pc_register <= (flags[0] == 1'b1) ? jump_val : pc_register + 1'b1;
+                        PC_JMP_REL: pc_register <= pc_register + jump_val;
+                        PC_JMPC_REL: pc_register <= (flags[1] == 1'b1) ? pc_register + jump_val : pc_register + 1'b1;
+                        PC_JMPZ_REL: pc_register <= (flags[0] == 1'b1) ? pc_register + jump_val : pc_register + 1'b1;
                         default: pc_register <= pc_register + 1'b1;
                     endcase
 

@@ -6,6 +6,7 @@
 `define RAM_OP 4'b0100 // The top nibble of operator byte determines if RAM operation
 `define ROM_OP 4'b0011 // The top nibble of operator byte determines if ROM operation
 `define REG_OP 4'b1001 // The top nibble of operator byte determines if ALU/REG operation
+`define PC_OP 4'b0111  // The top nibble of operator byte determines if PC operation (Jump to value stored in RAM)
 
 
 // Define the module
@@ -73,5 +74,6 @@ module  ram_verilog (
 
     assign read_data = (read_enable && (opcode[15:8] == {`RAM_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> Output
     assign read_data = (read_enable && (opcode[15:8] == {`REG_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> REG
+    assign read_data = (read_enable && (opcode[15:12] == `PC_OP)) ? ram_array[addr] : 16'bz; // RAM -> PC
     
 endmodule
