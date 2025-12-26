@@ -178,6 +178,11 @@ module processor_verilog (
                     ram_write_enable = 1'b1;
                     alu_read_enable = 1'b1;
                 end
+                // Load ROM from address in RAM
+                else if (opcode_bus[15:8] == 8'h32) begin
+                    ram_read_enable = 1'b1;
+                    alu_read_enable = 1'b1;
+                end
             end
             S2: begin // EXECUTE (ALU Operations)
                 if (opcode_bus[15:12] == 8'b0001) begin

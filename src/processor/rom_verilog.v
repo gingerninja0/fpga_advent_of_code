@@ -16,6 +16,7 @@ module  rom_verilog (
     output reg [`MSB:0] read_data
 );
     localparam ROM_DATA_READ = 4'h1;
+    localparam ROM_DATA_READ_ADDR = 4'h2;
 
 
     reg [`ROM_MSB:0] rom_array [0:256]; // 32 bit ROM (to store the operator and operand)
@@ -39,6 +40,8 @@ module  rom_verilog (
 
         if (rom_read_data_enable && (read_opcode[15:8] == {`ROM_OP, ROM_DATA_READ})) begin
             read_data = rom_array[read_operand];
+        end else if (rom_read_data_enable && (read_opcode[15:8] == {`ROM_OP, ROM_DATA_READ_ADDR})) begin // UNTESTED, GOAL IS TO BE ABLE TO JUMP TO THE ADDRESS STORTED IN RAM TO FACILITATE ITERATING THROUGH THE LIST
+            read_data = rom_array[addr];
         end else begin
             read_data = 16'bz; 
         end

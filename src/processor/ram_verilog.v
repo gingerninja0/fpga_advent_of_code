@@ -74,6 +74,7 @@ module  ram_verilog (
 
     assign read_data = (read_enable && (opcode[15:8] == {`RAM_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> Output
     assign read_data = (read_enable && (opcode[15:8] == {`REG_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> REG
+    assign read_data = (read_enable && (opcode[15:8] == {`ROM_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> ROM (Read ROM from address stored in RAM)
     assign read_data = (read_enable && (opcode[15:12] == `PC_OP)) ? ram_array[addr] : 16'bz; // RAM -> PC
     
 endmodule
