@@ -20,6 +20,7 @@ module processor_verilog (
     output wire [`MSB:0] pc_output,
     output wire [`MSB:0] opcode_bus_output,
     output wire [`MSB:0] operand_bus_output,
+    output wire [`MSB:0] data_bus_output,
     output wire [3:0] flags_bus_output
 );
 
@@ -35,6 +36,7 @@ module processor_verilog (
     // Connect the internal data_bus to the external output wire 
     assign opcode_bus_output = opcode_bus;
     assign operand_bus_output = operand_bus;
+    assign data_bus_output = data_bus;
     assign flags_bus_output = flags_bus;
     
     // Modules

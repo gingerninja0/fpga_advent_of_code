@@ -51,7 +51,7 @@ module  alu_verilog (
             // Update flags
             if (alu_op_select == `ALU_OP) begin
                 // Only update flags if it's an actual ALU operation
-                flags[0] = operation_result[`MSB:0] == `DATA_WIDTH'b0; // Result is zero
+                flags[0] = (operation_result[`MSB:0] == `DATA_WIDTH'b0) ? 1'b1 : 1'b0; // Result is zero
                 flags[1] = operation_result[`CARRY_BIT]; // Operation resulted in a carry
                 flags[2] = operation_result[`MSB]; // Sign bit
                 flags[3] = (a[`MSB] == b[`MSB]) && (operation_result[`MSB] != a[`MSB]); // Overflow, resulting sign bit does not match inputs (addition resulted in "negative", or subtraction resulted in "positive" due to overflow)
