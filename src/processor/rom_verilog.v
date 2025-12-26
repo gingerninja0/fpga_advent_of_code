@@ -38,7 +38,7 @@ module  rom_verilog (
         end
 
         if (rom_read_data_enable && (read_opcode[15:8] == {`ROM_OP, ROM_DATA_READ})) begin
-            read_data = read_operand;
+            read_data = rom_array[read_operand];
         end else begin
             read_data = 16'bz; 
         end
