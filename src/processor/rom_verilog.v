@@ -11,6 +11,7 @@ module  rom_verilog (
     input wire [`MSB:0] addr,   // 16 bit ROM addressing
     input wire rom_enable,
     input wire rom_read_data_enable,
+    input wire [`MSB:0] ram_rom_addr_link, // Link betwen RAM and ROM to allow for loading ROM value into RAM given an address stored in another RAM location
     output reg [`MSB:0] read_opcode, // Read the operator (upper 16 bits)
     output reg [`MSB:0] read_operand, // Read the operand (lower 16 bits)
     output reg [`MSB:0] read_data
@@ -40,8 +41,8 @@ module  rom_verilog (
 
         if (rom_read_data_enable && (read_opcode[15:8] == {`ROM_OP, ROM_DATA_READ})) begin
             read_data = rom_array[read_operand];
-        end else if (rom_read_data_enable && (read_opcode[15:8] == {`ROM_OP, ROM_DATA_READ_ADDR})) begin // UNTESTED, GOAL IS TO BE ABLE TO JUMP TO THE ADDRESS STORTED IN RAM TO FACILITATE ITERATING THROUGH THE LIST
-            read_data = rom_array[addr];
+        end else if (rom_read_data_enable && (read_opcode[15:8] == {`ROM_OP, ROM_DATA_READ_ADDR})) begin // Load ROM[RAM[OPCODE[7:0]]] -> RAM[OPERAND[7:0]] where the address is given from a dedicated link between the RAM and ROM modules
+            read_data = rom_array[ram_rom_addr_link];
         end else begin
             read_data = 16'bz; 
         end

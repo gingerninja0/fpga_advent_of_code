@@ -52,9 +52,9 @@ module processor_verilog_tb;
 
     // Monitor the changes in the console
     initial begin
-        // $monitor("Time=%t | PC=%h | STATE=%h | Data bus value=%h | opcode=%h | operand=%h | ALU flags=%b", $time, pc_output, current_state, data_bus_output, opcode_bus_output, operand_bus_output, flags_bus_output);
+        $monitor("Time=%t | PC=%h | STATE=%h | Data bus value=%h | opcode=%h | operand=%h | ALU flags=%b", $time, pc_output, current_state, data_bus_output, opcode_bus_output, operand_bus_output, flags_bus_output);
         // $monitor("Time=%t | PC=%h | Output=%d | Flags=%b", $time, pc_output, data_output, flags_bus_output);
-        $monitor("Time=%t | Output=%d", $time, data_output);
+        // $monitor("Time=%t | Output=%d", $time, data_output);
     end
 
 endmodule

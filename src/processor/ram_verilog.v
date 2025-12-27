@@ -18,7 +18,8 @@ module  ram_verilog (
     input wire [`MSB:0] write_data,
     input wire read_enable,
     input wire write_enable,
-    output wire [`MSB:0] read_data
+    output wire [`MSB:0] read_data,
+    output wire [`MSB:0] ram_rom_addr_link
 );
     localparam RAM_WRITE = 4'h1;
     localparam RAM_READ = 4'h2;
@@ -27,15 +28,18 @@ module  ram_verilog (
     reg [`MSB:0] data; // Data storage inside the RAM module
     wire [3:0] ram_op_select; 
     wire [3:0] ram_op_operation;
-    reg [7:0] addr;
+    reg [7:0] addr, addr_2;
 
     assign ram_op_select = opcode[15:12];
     assign ram_op_operation = opcode[11:8];
 
     // Writing to RAM from ROM (RAM Address in opcode)
     always @(*) begin
-        if ({ram_op_select} == {`ROM_OP}) begin
+        if ({ram_op_select, ram_op_operation} == {`ROM_OP, RAM_WRITE}) begin
             addr = opcode[7:0];
+        end else if ({ram_op_select, ram_op_operation} == {`ROM_OP, RAM_READ}) begin
+            addr = opcode[7:0];    // RAM Location to read the ROM Address from
+            addr_2 = operand[7:0]; // RAM Location to store the read value from ROM
         end else begin
             addr = operand[7:0];
         end
@@ -48,6 +52,7 @@ module  ram_verilog (
             case({ram_op_select, ram_op_operation})
                 {`RAM_OP, RAM_WRITE}: ram_array[addr] <= operand;
                 {`ROM_OP, RAM_WRITE}: ram_array[addr] <= write_data;
+                {`ROM_OP, RAM_READ}: ram_array[addr_2] <= write_data;
                 {`REG_OP, RAM_WRITE}: ram_array[addr] <= write_data;
             endcase
         end
@@ -74,7 +79,7 @@ module  ram_verilog (
 
     assign read_data = (read_enable && (opcode[15:8] == {`RAM_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> Output
     assign read_data = (read_enable && (opcode[15:8] == {`REG_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> REG
-    assign read_data = (read_enable && (opcode[15:8] == {`ROM_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // RAM -> ROM (Read ROM from address stored in RAM)
+    assign ram_rom_addr_link = (read_enable && (opcode[15:8] == {`ROM_OP, RAM_READ})) ? ram_array[addr] : 16'bz; // ROM[RAM_1] -> RAM_2 (Read ROM from address stored in RAM)
     assign read_data = (read_enable && (opcode[15:12] == `PC_OP)) ? ram_array[addr] : 16'bz; // RAM -> PC
     
 endmodule

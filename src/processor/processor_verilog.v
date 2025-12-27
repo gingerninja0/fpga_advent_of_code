@@ -28,6 +28,7 @@ module processor_verilog (
     wire [`MSB:0] opcode_bus;
     wire [`MSB:0] operand_bus;
     wire [`MSB:0] data_bus;
+    wire [`MSB:0] ram_rom_addr_link; // For loading ROM value from address given in RAM, value is then put in another RAM slot
     wire [3:0] flags_bus;
 
     // Control wires
@@ -73,7 +74,8 @@ module processor_verilog (
         .write_data(data_bus),
         .read_data(data_bus),
         .write_enable(ram_write_enable),
-        .read_enable(ram_read_enable)
+        .read_enable(ram_read_enable),
+        .ram_rom_addr_link(ram_rom_addr_link)
     );
 
     rom_verilog rom(
@@ -82,7 +84,8 @@ module processor_verilog (
         .rom_read_data_enable(rom_read_data_enable),
         .read_opcode(opcode_bus),
         .read_operand(operand_bus),
-        .read_data(data_bus)
+        .read_data(data_bus),
+        .ram_rom_addr_link(ram_rom_addr_link)
     );
 
 
@@ -178,10 +181,12 @@ module processor_verilog (
                     ram_write_enable = 1'b1;
                     alu_read_enable = 1'b1;
                 end
-                // Load ROM from address in RAM
+                // Load ROM from address in RAM:opcode into RAM:operand addr
+                // ROM[RAM[OPCODE[7:0]]] -> RAM[OPERAND[7:0]]
                 else if (opcode_bus[15:8] == 8'h32) begin
                     ram_read_enable = 1'b1;
-                    alu_read_enable = 1'b1;
+                    rom_read_data_enable = 1'b1;
+                    ram_write_enable = 1'b1;
                 end
             end
             S2: begin // EXECUTE (ALU Operations)
