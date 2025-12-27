@@ -7,6 +7,13 @@
 //                    ram_read_enable = 1'b1;
 //                    alu_read_enable = 1'b1;
 //                end
+// 3101_0004 // Load the ROM value read address into RAM:1                                                 0
+// 3201_0002 //                                                                                            1
+// 4200_0002 // Display the value from RAM:2, the value from ROM[RAM:1], 0x1234                            2
+// 0000_0000 //                                                                                            3
+// 0000_0005 // Address of the ROM value to read, will get loaded into RAM:01 :ADDR_1 (try putting 6 here) 4
+// 0000_1234 // Value in ROM Address :ADDR_1 to display from RAM:2                                         5
+// 0000_4321 // Value in ROM Address :ADDR_1 to display from RAM:2                                         6
 f000_0007  // Where the code actually starts, below is Constants
 0000_0000           // Halt if jump fails for any reason        1
 // Constants, stored in RAM:1X
