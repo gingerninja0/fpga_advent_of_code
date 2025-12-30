@@ -43,7 +43,7 @@ module processor_verilog_tb;
         #20 reset = 0;
         @(negedge clk); 
 
-        #30000;
+        #10000000;
 
         // End simulation
         $display("Simulation finished.");
@@ -55,6 +55,7 @@ module processor_verilog_tb;
         // $monitor("Time=%t | PC=%h | STATE=%h | Data bus value=%h | opcode=%h | operand=%h | ALU flags=%b", $time, pc_output, current_state, data_bus_output, opcode_bus_output, operand_bus_output, flags_bus_output);
         // $monitor("Time=%t | PC=%h | Output=%d | Flags=%b", $time, pc_output, data_output, flags_bus_output);
         $monitor("Time=%t | Output=%d", $time, data_output);
+        // $monitor("Time=%t | PC=%h | Output=%d | Dial=%d", $time, pc_output, data_output, uut.alu.register.registers[0]);
     end
 
 endmodule

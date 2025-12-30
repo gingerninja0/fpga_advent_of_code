@@ -1,0 +1,9 @@
+// Input start
+0000_0005           // Length of input
+0000_0000           // Data starts after this value
+0000_FFCE
+0000_0064
+0000_FFE7
+0000_FFB5
+0000_0001
+// Input end
