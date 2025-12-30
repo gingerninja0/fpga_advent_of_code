@@ -29,8 +29,12 @@ module  rom_verilog (
         
         for (i = 0; i < `DATA_WIDTH; i = i + 1) rom_array[i] = 32'h0;
         
-        // Load your program
-        $readmemh("program.mem", rom_array);
+        // Load your program (between 0 - 1023, including variables)
+        $readmemh("program.mem", rom_array, 0, 1023);
+
+        // Load data from (1024 - end)
+        $readmemh("data.mem", rom_array, 1024);
+
     end
 
     always @(*) begin

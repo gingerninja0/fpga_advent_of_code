@@ -1,20 +1,6 @@
-data = """
-L68
-L30
-R48
-L5
-R60
-L55
-L1
-L99
-R14
-L82
-"""
-
 input_filename = 'input.txt'
-output_filename = 'output_test.txt'
+output_filename = 'output_full.txt'
 
-lines = data.strip().split('\n')
 results = []
 
 length = 0
@@ -38,8 +24,8 @@ with open(input_filename, 'r') as f:
 
 
 print("// Input start")
-print(f"0000_{((length) & 0xFFFF):04X}           // 31: Length of input")
-print(f"0000_0000           // 32: Data starts after this value") 
+print(f"0000_{((length) & 0xFFFF):04X}           // 0x0400: Length of input")
+print(f"0000_0000           // 0x0401: Data starts after this value") 
 
 for hex_val in results:
     print(f"0000_{hex_val}")
@@ -49,8 +35,8 @@ print("// Input end")
 
 with open(output_filename, 'w') as out:
     out.write("// Input start\n")
-    out.write(f"0000_{length:04X}           // Length of input\n")
-    out.write(f"0000_0000           // Data starts after this value\n") 
+    out.write(f"0000_{length:04X}           // 0x0400: Length of input\n")
+    out.write(f"0000_0000           // 0x0401 Data starts after this value\n") 
 
     for hex_val in results:
         out.write(f"0000_{hex_val}\n")
