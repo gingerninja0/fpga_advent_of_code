@@ -1,86 +1,81 @@
-// NOT CORRECT, HERE AS A BACK UP
 // Day 1 Part 1
+// I've since found out that doing "@XXX" will set the memory address manually, I could do this in the next program to simplify writing of the program and clarity of the code, I did not use that in this program however I may update it at a later date
 // Constants as the start of the code this time, hopefully it'll be easier to keep track of
-// NEED TO DO A TEST OF LOADING A ROM VALUE FROM ADDRESS STORED IN RAM !!!!!!!!!!!!
-//                // Load ROM from address in RAM
-//                else if (opcode_bus[15:8] == 8'h32) begin
-//                    ram_read_enable = 1'b1;
-//                    alu_read_enable = 1'b1;
-//                end
-// 3101_0004 // Load the ROM value read address into RAM:1                                                 0
-// 3201_0002 //                                                                                            1
-// 4200_0002 // Display the value from RAM:2, the value from ROM[RAM:1], 0x1234                            2
-// 0000_0000 //                                                                                            3
-// 0000_0005 // Address of the ROM value to read, will get loaded into RAM:01 :ADDR_1 (try putting 6 here) 4
-// 0000_1234 // Value in ROM Address :ADDR_1 to display from RAM:2                                         5
-// 0000_4321 // Value in ROM Address :ADDR_1 to display from RAM:2                                         6
-f000_0007  // Where the code actually starts, below is Constants
-0000_0000           // Halt if jump fails for any reason        1
+f000_0008           // 0: JMP 0x0008                Where the code actually starts, below is Constants
+0000_0000           // 1: HALT                      Halt if jump fails for any reason        
 // Constants, stored in RAM:1X
-0000_0032           // 50d - Initial dial value of 50d (0x32)   2
-0000_0001           // 1d                                       3
-0000_0064           // 100d                                     4
-0000_0063           // 99d                                      5
-0000_0021           // 0d                                       6
+0000_0032           // 2: 50d                       50d - Initial dial value of 50d (0x32)   
+0000_0001           // 3: 1d               
+0000_0064           // 4: 100d
+0000_0063           // 5: 99d
+0000_0000           // 6: 0d
+0000_0402           // 7: 1026d                     Address of the first value of the input data, stored in data.mem now at 0x0402
 // FIRST LINE OF CODE - Line 7
 // Load constants into RAM:1X
-3110_0002           // 50d in RAM:10 // 7
-3111_0003           // 1d in RAM:11 // 8
-3112_0004           // 100d in RAM:12  //9
-3113_0005           // 99d in RAM:13  // a 
-3114_0001           // 0d in RAM:14  //b
-3115_0006           // Address of first input value in RAM:15 (FROM ROM: START TBD) // c
+3110_0002           // 8: LOAD RAM:10 ROM:02        50d in RAM:10
+3111_0003           // 9: LOAD RAM:11 ROM:03        1d in RAM:11
+3112_0004           // a: LOAD RAM:12 ROM:04        100d in RAM:12
+3113_0005           // b: LOAD RAM:13 ROM:05        99d in RAM:13
+3114_0006           // c: LOAD RAM:14 ROM:06        0d in RAM:14
 // Load constants into REGs 
-9200_0010           // 50d in REG:0 //e
-9201_0011           // 1d in REG:1 //f
-9202_0012           // 100d in REG:2 // 10
-9203_0013           // 99d in REG:3 // 11
-9204_0014           // 0d in REG:4 // 12 
+9200_0010           // d: LOAD REG:00 ROM:10        50d in REG:0, Current dial val, not really a constant...
+9201_0011           // e: LOAD REG:01 RAM:11        1d in REG:1
+9202_0012           // f: LOAD REG:02 RAM:12        100d in REG:2
+9203_0013           // 10: LOAD REG:03 RAM:13       99d in REG:3
+9204_0014           // 11: LOAD REG:04 RAM:14       0d in REG:4 
 // Load variables into RAM:2X
-3121_0001           // 0d in RAM:21, RAM:21 and REG:11 to store current input value 13
-3101_001f           // Length of input in RAM:01 (FROM ROM: TBD) // 14
+3120_0006           // 12: LOAD RAM:20 ROM:06       Initialise 0d in RAM:21, to count the number of zeros (the output of the challenge)
+3121_0006           // 13: LOAD RAM:21 ROM:06       RAM:21 to store the current value from the list (initialised to zero for clarity)
+3122_0007           // 14: LOAD RAM:22 ROM:07       Address of first input value in RAM:22, this gets iterated by the program to read the list
+3123_0400           // 15: LOAD RAM:23 ROM:400      Length of data input, given from the preprocessing of the data, stored in data.mem now at 0x0400
 // Load variables into REGs 
-9208_0001           // [Length of input] in REG:8 from RAM:01 14 
-9209_0014           // REG:9 to store 0 count (Output of program) Initialised to const:0d 15
-920a_0015           // Address of first input value in REG:a from RAM:15 16 // NOT WORKING YET !!!!!!! NEED TO READ FROM RAM VALUE INTO ROM ADDRESS
-920b_0021           // RAM:21 and REG:b to store current input value 17
+9208_0023           // 16: LOAD REG:8 RAM:23        [Length of input] in REG:8 from RAM:01 (Will be decremented to count position in input)
+9209_0020           // 17: LOAD REG:9 RAM:20        REG:9 to store 0 count (Output of program) Initialised to 0d (Where the result will be stored)
+920a_0022           // 18: LOAD REG:a RAM:22        Address of first input value in REG:a from RAM:22 (Will be iterated to read through list)
+920b_0021           // 19: LOAD REG:b RAM:21        REG:b to store current input value (From ROM[RAM] -> RAM operation)
+//
+//
 // Main Loop Start
-2208_0000  // 18
-100f_0804 // 19
-f100_001e // 1a
-1108_0108 // 1b
-2208_0000  // 1c 2nd output command to check subtraction
-f000_0018 // 1d
+//
+FFFF_FFFF           // 1a: OUT 08                   Display current position in the loop for debugging, replace with FFFF_FFFF for no-op, 2208_0000 to display loop iteration
+// Get next value from list and add to the dial_val (REG:00)
+3222_0021           // 1b: ROM:[RAM:22] -> RAM:21   Get the value at ROM address given by RAM:22 and store in RAM:21
+920b_0021           // 1c: LOAD REG:b RAM:21        Put the input_val in REG:b for the addition
+1000_0b00           // 1d: ADD REG:0 = REG:0 + REG:b (dial_val = dial_val + input_val) Update dial value from current input_val from the input array
+// Update the address pointer
+100a_010a           // 1e: ADD REG:a = REG:a + REG:1    Increment the input array address pointer
+910a_0022           // 1f: LOAD RAM:22 REG:a        Update RAM:22 with the incremented address pointer for the next loop
+// Decrement the length of input to act as iteration variable
+1108_0108           // 20: SUB REG:8 = REG:8 - REG:1    Subtract 1 from the input array length to track position in list
+// Underflow check
+// while (dial_val + 0 < 0)
+//    dial_val = 100 + dial_val
+// end_while
+// Start of underflow loop
+100F_0400           // 21: ADD REG:F = REG:0 + REG:4 (TEMP = dial_val + 0) To update the flags to check if its negative, dummy result stored in REG:f (TEMP)
+f700_0025           // 22: JMPNN 25                 JMPNN Jump if not negative (positive), check if we need to run the underflow loop, if not then this will be true and we will jump over it
+1000_0200           // 23: ADD REG:0 = REG:0 + REG:2 (dial_val = dial_val + 100)
+f000_0021           // 24: JMP 21                   If the exit condition is not met, we loop again, jump to start of loop
+// End of underflow loop
+// Overflow check
+// while (99 - dial_val < 0)
+//    dial_val = dial_val - 100
+// end_while
+// Start of overflow loop
+110F_0003           // 25: SUB REG:F = REG:3 - REG:0 (TEMP = 99 - dial_val) To update the flags to check if its negative, dummy result stored in REG:f (TEMP)
+f700_0029           // 26: JMPNN 29                 JMPNN Jump if not negative (positive), check if we need to run the underflow loop, if not then this will be true and we will jump over it
+1100_0200           // 27: ADD REG:0 = REG:0 - REG:2 (dial_val = dial_val - 100)
+f000_0025           // 28: JMP 25                   If the exit condition is not met, we loop again, jump to start of loop
+// End of overflow loop
+// Increment the output variable by 1 if the dial value is zero
+100F_0004           // 29: ADD REG:F = REG:0 + REG:4 (TEMP = dial_val + 0) To update the flags to check for zero result
+f500_002c           // 2a: JMPNZ                    If the result is not zero, skip incrementing the result value, if the result is zero then the increment is performed
+1009_0901           // 2b: ADD REG:9 = REG:9 + REG:1 (result_val = result_val + 1) Increment the output variable when the result is zero
+// Check loop condition and exit
+100f_0804           // 2c: ADD REG:F = REG:8 + REG:4 (TEMP = loop_index + 0) To update flags to check for zero result to exit the loop
+f100_002f           // 2d: JMPZ 2f                  Jump to end of program if the loop_index equals zero to display thr result and exit the program
+f000_001a           // 2e: JMP 1a                   Jump to the start of the loop
 // Main Loop End
-0000_0000 // HALT // 1e
-// Input start
-0000_000A // Length of input (ADDR TBD) // 1f
-0000_0000 // Data starts after this value // 20
-0000_FFBC // (Start TBD) // 21
-0000_FFE2
-0000_0030
-0000_FFFB
-0000_003C
-0000_FFC9
-0000_FFFF
-0000_FF9D
-0000_000E
-0000_FFAE
-// Input end
-
-
-// Day 1 Part 1
-3101_000d                    // Store the input length in RAM:01 to move to register                                         0
-9201_0001                    // Load REG:1 from RAM:01, contains the current loop number                                     1
-3110_000b                    // Location of zero data to load into RAM:10 for use as a comparison                            2
-920f_0010                    // Load REG:f from RAM:10, contains zero for use in the comparison                              3
-3111_000c                    // Location of one data to load into RAM:11 for use as a subtractor                             4
-920e_0011                    // Load REG:e from RAM:11, contains one for use in subtractions                                 5
-2201_0000 // START OF LOOP   // Output REG:1 for testing of the loop                                                         6
-100d_0f01                    // Set flags for Jump-zero on next line, add 0 to the count register and check if zero result   7
-f100_000b                    // Jump-zero to end of program one we've iterated through each input number                     8
-1101_0e01                    // Subtract one (REG:e) from the loop number (REG:1)                                            9
-f000_0006 // END OF LOOP     // Jump to start of loop if we don't jump out from the other check                              a
-0000_0000                    // End program FLAG_END_PROGRAM_ADDRESS                                                         b
-0000_0001                    // ONE_CONST_ADDR                                                                               c
-0000_0009                    // Iterations number+1 (e.g. input of 8 will result in 9 iteraionts)                            d
+2209_0000           // 2f: Output the result value
+0000_0000           // 30: HALT END PROGRAM
+// Program data from 1024, stored in data.mem for clarity

@@ -1,6 +1,7 @@
 // Day 1 Part 1
+// I've since found out that doing "@XXX" will set the memory address manually, I could do this in the next program to simplify writing of the program and clarity of the code, I did not use that in this program however I may update it at a later date
 // Constants as the start of the code this time, hopefully it'll be easier to keep track of
-f000_0008           // 0: JMP 0x0007                Where the code actually starts, below is Constants
+f000_0008           // 0: JMP 0x0008                Where the code actually starts, below is Constants
 0000_0000           // 1: HALT                      Halt if jump fails for any reason        
 // Constants, stored in RAM:1X
 0000_0032           // 2: 50d                       50d - Initial dial value of 50d (0x32)   
@@ -36,7 +37,7 @@ f000_0008           // 0: JMP 0x0007                Where the code actually star
 //
 // Main Loop Start
 //
-FFFF_FFFF           // 1a: OUT 08                   Display current position in the loop for debugging, replace with FFFF_FFFF for no-op, 2208_0000 for loop iteration
+FFFF_FFFF           // 1a: OUT 08                   Display current position in the loop for debugging, replace with FFFF_FFFF for no-op, 2208_0000 to display loop iteration
 // Get next value from list and add to the dial_val (REG:00)
 3222_0021           // 1b: ROM:[RAM:22] -> RAM:21   Get the value at ROM address given by RAM:22 and store in RAM:21
 920b_0021           // 1c: LOAD REG:b RAM:21        Put the input_val in REG:b for the addition
@@ -72,7 +73,7 @@ f500_002c           // 2a: JMPNZ                    If the result is not zero, s
 1009_0901           // 2b: ADD REG:9 = REG:9 + REG:1 (result_val = result_val + 1) Increment the output variable when the result is zero
 // Check loop condition and exit
 100f_0804           // 2c: ADD REG:F = REG:8 + REG:4 (TEMP = loop_index + 0) To update flags to check for zero result to exit the loop
-f100_002f           // 2d: JMPZ 2f
+f100_002f           // 2d: JMPZ 2f                  Jump to end of program if the loop_index equals zero to display thr result and exit the program
 f000_001a           // 2e: JMP 1a                   Jump to the start of the loop
 // Main Loop End
 2209_0000           // 2f: Output the result value
