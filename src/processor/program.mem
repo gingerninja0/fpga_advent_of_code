@@ -1,3 +1,121 @@
+// Day 1 Part 1
+// Constants as the start of the code this time, hopefully it'll be easier to keep track of
+f000_0007           // 0: JMP 0x0007            Where the code actually starts, below is Constants
+0000_0000           // 1: HALT                  Halt if jump fails for any reason        
+// Constants, stored in RAM:1X
+0000_0032           // 2: 50d                   50d - Initial dial value of 50d (0x32)   
+0000_0001           // 3: 1d               
+0000_0064           // 4: 100d
+0000_0063           // 5: 99d
+0000_0000           // 6: 0d
+0000_00XX           // 7: XX                    Address of the first value of the input data
+// FIRST LINE OF CODE - Line 7
+// Load constants into RAM:1X
+3110_0002           // 8: LOAD RAM:10 ROM:02    50d in RAM:10
+3111_0003           // 9: LOAD RAM:11 ROM:03    1d in RAM:11
+3112_0004           // a: LOAD RAM:12 ROM:04    100d in RAM:12
+3113_0005           // b: LOAD RAM:13 ROM:05    99d in RAM:13
+3114_0006           // c: LOAD RAM:14 ROM:06    0d in RAM:14
+// Load constants into REGs 
+9200_0010           // d: LOAD REG:00 ROM:10    50d in REG:0
+9201_0011           // e: LOAD REG:01 RAM:11    1d in REG:1
+9202_0012           // f: LOAD REG:02 RAM:12   100d in REG:2
+9203_0013           // 10: LOAD REG:03 RAM:13   99d in REG:3
+9204_0014           // 11: LOAD REG:04 RAM:14   0d in REG:4 
+// Load variables into RAM:2X
+3120_0006           // 12: LOAD RAM:20 ROM:06   Initialise 0d in RAM:21, to count the number of zeros (the output of the challenge)
+3121_0006           // 13: LOAD RAM:21 ROM:06   RAM:21 to store the current value from the list (initialised to zero for clarity)
+3122_0007           // 14: LOAD RAM:22 ROM:07   Address of first input value in RAM:22, this gets iterated by the program to read the list
+3123_0007           // 14: LOAD RAM:23 ROM:YY   Length of data input
+// Load variables into REGs 
+9208_0023           // 15: LOAD REG:8 RAM:23    [Length of input] in REG:8 from RAM:01 (Will be decremented to count position in input)
+9209_0020           // 16: LOAD REG:9 RAM:20    REG:9 to store 0 count (Output of program) Initialised to 0d (Where the result will be stored)
+920a_0022           // 17: LOAD REG:a RAM:22    Address of first input value in REG:a from RAM:22 (Will be iterated to read through list)
+920b_0021           // 18: LOAD REG:b RAM:21    REG:b to store current input value 17 (From ROM[RAM] -> RAM operation)
+// Main Loop Start
+2208_0000  // 18
+100f_0804 // 19
+f100_001e // 1a
+1108_0108 // 1b
+2208_0000  // 1c 2nd output command to check subtraction
+f000_0018 // 1d
+// Main Loop End
+0000_0000 // HALT // 1e
+
+// Input start
+0000_000A // Length of input (ADDR TBD) // YY
+0000_0000 // Data starts after this value // 20
+0000_FFBC // (Start TBD) // 21
+0000_FFE2
+0000_0030
+0000_FFFB
+0000_003C
+0000_FFC9
+0000_FFFF
+0000_FF9D
+0000_000E
+0000_FFAE
+// Input end
+
+
+
+// Loop through ROM data example
+f000_0004 // 0: Jump to start of program
+0000_0000 // 1:
+// Constants
+0000_0000 // 2: zero
+0000_0001 // 3: one
+// Load Constants into RAM and REG
+3110_0002 // 4: Load RAM:10 with 2:zero
+3111_0003 // 5: Load RAM:11 with 3:one
+9201_0010 // 6: Load REG:1 with RAM:10 (zero)
+9202_0011 // 7: Load REG:2 with RAM:11 (one)
+// Variables
+3101_0015 // 8: 0x15 stores the length of the list to printd
+3102_0016 // 9: 0x16 stores the address of the first element of the list, which is 0x17 in this case
+9203_0001 // a: REG:3 contains length of data (to be decremented)
+9204_0002 // b: REG:4 contains address of first data value (to be iterated)
+// Start Loop
+9104_0002 // c: Write iterated value from REG:4 to RAM:01 to then use to read ROM from here
+3202_0020 // d: ROM[RAM:02] -> RAM:20
+4200_0020 // e: Display the value read from ROM[RAM:01], stored in RAM:20
+1004_0402 // f: Add 1 to the ROM read address register to iterate through list (REG:4 + REG:2 = REG:4)
+100f_0301 // 10: See if addition with zero results in zero (REG:3 + REG:1) to break out of loop
+f100_0014 // 11: Jump-zero to end of program if we've iterated through each variable
+1103_0203 // 12: Subtract 1 (REG:2) from the length of data (REG:3)
+f000_000c // 13: Jump back to start of loop if jump-zero not triggered
+// End Loop
+0000_0000 // 14: END OF PROGRAM  HALT
+0000_0005 // 15: Data Length - 1, e.g. Data length of 5 will print 6 values
+0000_0017 // 16: 0x17 is the address of the first value, this is the value thats iterated
+0000_0001 // 17: List begin
+0000_0003 // 18
+0000_0005 // 19
+0000_0002 // 1a
+0000_0004 // 1b
+0000_0006 // 1c: List end
+
+
+// Day 1 Part 1
+3101_000d                    // Store the input length in RAM:01 to move to register                                         0
+9201_0001                    // Load REG:1 from RAM:01, contains the current loop number                                     1
+3110_000b                    // Location of zero data to load into RAM:10 for use as a comparison                            2
+920f_0010                    // Load REG:f from RAM:10, contains zero for use in the comparison                              3
+3111_000c                    // Location of one data to load into RAM:11 for use as a subtractor                             4
+920e_0011                    // Load REG:e from RAM:11, contains one for use in subtractions                                 5
+2201_0000 // START OF LOOP   // Output REG:1 for testing of the loop                                                         6
+100d_0f01                    // Set flags for Jump-zero on next line, add 0 to the count register and check if zero result   7
+f100_000b                    // Jump-zero to end of program one we've iterated through each input number                     8
+1101_0e01                    // Subtract one (REG:e) from the loop number (REG:1)                                            9
+f000_0006 // END OF LOOP     // Jump to start of loop if we don't jump out from the other check                              a
+0000_0000                    // End program FLAG_END_PROGRAM_ADDRESS                                                         b
+0000_0001                    // ONE_CONST_ADDR                                                                               c
+0000_0009                    // Iterations number+1 (e.g. input of 8 will result in 9 iteraionts)                            d
+
+
+
+
+
 // Loop through ROM data example
 f000_0004 // 0: Jump to start of program
 0000_0000 // 1:
