@@ -1,5 +1,5 @@
 (library
- (name alu_hardcaml)
+ (name alu_components)
  (inline_tests)
  (preprocess (pps ppx_expect ppx_hardcaml))
  (libraries hardcaml))
