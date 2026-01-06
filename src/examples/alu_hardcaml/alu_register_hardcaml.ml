@@ -82,9 +82,6 @@ let%expect_test "ALU&Register Operations Test" =
 		inputs.read_enable := Bits.of_int ~width:1 read_en;
 		inputs.write_enable := Bits.of_int ~width:1 write_en;
 
-		inputs.clk := Bits.vdd;
-		Cyclesim.cycle sim;
-		inputs.clk := Bits.gnd;
 		Cyclesim.cycle sim;
 
 		Printf.printf "Op:%04x | Data Out:%d | Flags:%s\n" 
