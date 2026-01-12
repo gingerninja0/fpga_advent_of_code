@@ -53,13 +53,20 @@ let create (i : Signal.t I.t) =
     let data_to_write = mux2 ((ram_op_select @: ram_op_operation) ==: (ram_op_val @: ram_write_op_val)) i.operand i.write_data in
     let write_address = mux2 ((ram_op_select @: ram_op_operation) ==: (rom_op_val @: ram_read_op_val)) addr_2 addr in
 
+    let is_valid_write_op = 
+        ((ram_op_select @: ram_op_operation) ==: (ram_op_val @: ram_write_op_val)) |:
+        ((ram_op_select @: ram_op_operation) ==: (rom_op_val @: ram_write_op_val)) |:
+        ((ram_op_select @: ram_op_operation) ==: (rom_op_val @: ram_read_op_val))  |:
+        ((ram_op_select @: ram_op_operation) ==: (reg_op_val @: ram_write_op_val))
+    in
+
     (* the RAM itself, 256 addresses *)
     let memory_outputs =
 		multiport_memory 256
 		~write_ports:[|
 			{ write_clock   = i.clk
 			; write_address = write_address
-			; write_enable  = i.write_enable         
+			; write_enable  = i.write_enable &: is_valid_write_op
 			; write_data    = data_to_write
 			}
 		|]
