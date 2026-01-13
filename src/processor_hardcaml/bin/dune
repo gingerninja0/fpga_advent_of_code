@@ -1,0 +1,4 @@
+(executable
+ (name main)
+ (preprocess (pps ppx_hardcaml))
+ (libraries hardcaml processor_hardcaml_lib))

@@ -1,5 +1,5 @@
 (library
- (name processor_hardcaml)
+ (name processor_hardcaml_lib)
  (inline_tests)
  (preprocess (pps ppx_expect ppx_hardcaml ppx_inline_test ppx_jane))
  (libraries hardcaml))
