@@ -73,4 +73,5 @@ let run_program program_name program data iterations =
 
 let () =
 	(* run_program "Fibonacci" Programs.fibonacci Data.none (35); *)
-	run_program "Day 1 Part 1" Programs.day_1_part_1 Data.day_1_data (-1)
+	run_program "Day 1 Part 1" Programs.day_1_part_1 Data.day_1_data (-1);
+	run_program "Day 1 Part 2" Programs.day_1_part_2 Data.day_1_data (-1)
