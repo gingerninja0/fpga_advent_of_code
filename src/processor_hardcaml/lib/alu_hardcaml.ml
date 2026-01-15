@@ -3,7 +3,7 @@ open Signal
 
 module I = struct
 	type 'a t = {
-		clk    : 'a;			(* Not used in this module, alu is combinatorial *)
+		clk    : 'a;			(* Used only to update flags register *)
 		reset  : 'a;
 		opcode : 'a; [@bits 16]
 		a      : 'a; [@bits 16]

@@ -51,6 +51,7 @@ let create (i : Signal.t I.t) =
         ~: z;          (* 5: JMPNZ *)
         ~: c;          (* 6: JMPNC *)
         ~: n;          (* 7: JMPNN *)
+        ~: o;          (* 8: JMPNO *)
     ] in
 
     let current_pc = wire 16 in
